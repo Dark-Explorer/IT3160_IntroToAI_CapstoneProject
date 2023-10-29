@@ -15,7 +15,7 @@ class Maze(turtle.Turtle):  # define a Maze class
         turtle.Turtle.__init__(self)
         self.shape("square")  # the turtle shape
         self.color("white")  # colour of the turtle
-        #self.penup()  # lift the pen so it do not leave a trail
+        self.penup()  # lift the pen so it do not leave a trail
         self.speed(0)
 
 
@@ -130,7 +130,7 @@ grid = [
     "++++++  +++++++++ e +",
     "++++++ +++++++++++  +",
     "++++++ ++++++++++++ +",
-    "++++++ +++++++++++  +",
+    "++++++ ++++++++++++ +",
     "++++++             ++",
     "+++++++++++++++++  ++",
     "+++++++++++++++++  ++",
@@ -222,7 +222,7 @@ def dfs(x, y):
     solution[x, y] = x, y
 
     while len(frontier) > 0:
-        time.sleep(0.5)
+        time.sleep(0)
         x, y = frontier.pop()
         if (x - 24, y) in path and (x - 24, y) not in visited:  # check the cell on the left
             cell = (x - 24, y)
