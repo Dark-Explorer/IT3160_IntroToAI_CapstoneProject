@@ -1,25 +1,165 @@
-import turtle  # import turtle library
+import turtle
 import time
 import sys
 from collections import deque
+import PySimpleGUI as sg
 
-wn = turtle.Screen()  # define the turtle screen
-wn.bgcolor("black")  # set the background colour
+global input_grid
+
+
+# Set up the maze with PySimpleGUI
+def create_maze():
+    layout = [[sg.Text('Number of rows:'), sg.Input(key='-ROWS-')],
+              [sg.Text('Number of columns:'), sg.Input(key='-COLS-')],
+              [sg.Button('Submit')]]
+
+    window = sg.Window('Maze Setup', layout)
+
+    while True:
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED or event == 'Submit':
+            break
+
+    window.close()
+
+    m = int(values['-ROWS-'])
+    n = int(values['-COLS-'])
+
+    layout = [[sg.Button('', size=(2, 1), key=(i,j), pad=(0, 0), button_color=('white', 'white')) for j in range(n)] for i in range(m)]
+    layout.append([sg.Button('Set Start'), sg.Button('Set End'), sg.Button('Set Wall')])
+    layout.append([sg.Button('Submit')])
+
+    window = sg.Window('Maze Setup', layout)
+
+    start_set = False
+    end_set = False
+    wall_set = True
+    start = end = None
+
+    start_existed = 0
+    end_existed = 0
+
+    while True:
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED:
+            break
+
+        if type(event) == tuple:
+            button = window[event]
+            if wall_set:
+                if button.ButtonColor[1] == 'white':
+                    button.update(button_color=('white', 'black'))
+                elif button.ButtonColor[1] == 'black':
+                    button.update(button_color=('white', 'white'))
+            elif start_set:
+                if start:
+                    start.update(button_color=('white', 'white'))
+                button.update(button_color=('white', 'red'))
+                start = button
+            elif end_set:
+                if end:
+                    end.update(button_color=('white', 'white'))
+                button.update(button_color=('white', 'purple'))
+                end = button
+        elif event == 'Set Start':
+            start_set = True
+            end_set = False
+            wall_set = False
+        elif event == 'Set End':
+            end_set = True
+            start_set = False
+            wall_set = False
+        elif event == 'Set Wall':
+            wall_set = True
+            start_set = False
+            end_set = False
+        elif event == 'Submit':
+            global input_grid
+            input_grid = []
+            tmp = "+" * (n + 2)
+            input_grid.append(tmp)
+            for i in range(m):
+                row = '+'
+                for j in range(n):
+                    button = window[(i, j)]
+                    if button.ButtonColor[1] == 'black':
+                        row += '+'
+                    elif button.ButtonColor[1] == 'white':
+                        row += ' '
+                    elif button.ButtonColor[1] == 'red':
+                        row += 's'
+                        start_existed = 1
+                    elif button.ButtonColor[1] == 'purple':
+                        row += 'e'
+                        end_existed = 1
+                row += '+'
+                input_grid.append(row)
+            input_grid.append(tmp)
+
+            if start_existed == 0:
+                layout1 = [[sg.Text('Start point not set!')],
+                           [sg.Button('OK')]
+                           ]
+                window1 = sg.Window('Warning',layout1)
+                event1, values1 = window1.read()
+                if event1 == 'OK':
+                    window1.close()
+
+            if end_existed == 0:
+                layout1 = [[sg.Text('End point not set!')],
+                           [sg.Button('OK')]
+                           ]
+                window1 = sg.Window('Warning', layout1)
+                event1, values1 = window1.read()
+                if event1 == 'OK':
+                    window1.close()
+            window.close()
+            # with open('grid.txt', 'w') as f:
+            #     for line in grid:
+            #         f.write(line + "\n")
+            #     window.close()
+
+
+def select_algorithm():
+    layout = [[sg.Text('Choose the algorithm you want to solve this maze with:')],
+              [sg.Button('BFS'), sg.Button('DFS'), sg.Button('A*')]
+              ]
+
+    window = sg.Window('Select Algorithm', layout)
+
+    while True:
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED:
+            break
+        if event == 'BFS':
+            window.close()
+            bfs(start_x, start_y)
+        elif event == 'DFS':
+            window.close()
+            dfs(start_x, start_y)
+        elif event == 'A*':
+            window.close()
+            print('A* still developing')
+
+
+# Maze by Turtle
+wn = turtle.Screen()
+wn.bgcolor("black")
 wn.title("Maze Solving Program")
-wn.setup(1300, 700)  # setup the dimensions of the working window
+wn.setup(1300, 700)
+
+global start_x, start_y, end_x, end_y
 
 
-# this is the class for the Maze
-class Maze(turtle.Turtle):  # define a Maze class
+class Maze(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
-        self.shape("square")  # the turtle shape
-        self.color("white")  # colour of the turtle
-        self.penup()  # lift the pen so it do not leave a trail
+        self.shape("square")
+        self.color("white")
+        self.penup()
         self.speed(0)
 
 
-# this is the class for the finish line - green square in the maze
 class Green(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -57,75 +197,15 @@ class Yellow(turtle.Turtle):
         self.speed(0)
 
 
-# grid = [
-# "+++++++++++++++",
-# "+s+       + +e+",
-# "+ +++++ +++ + +",
-# "+ + +       + +",
-# "+ +   +++ + + +",
-# "+ + + +   + + +",
-# "+   + +   + + +",
-# "+++++ +   + + +",
-# "+     +   +   +",
-# "+++++++++++++++",
-# ]
+# with open('grid.txt', 'r') as f:
+#     grid = []
+#     for line in f:
+#         row = line.strip()
+#         grid.append(row)
 
-with open('grid.txt', 'r') as f:
-    grid = []
-    for line in f:
-        row = line.strip()
-        grid.append(row)
-
-print(grid)
-# grid = [
-#     "+++++++++++++++++++++++++++++++++++++++++++++++++++",
-#     "+               +                                 +",
-#     "+  ++++++++++  +++++++++++++  +++++++  ++++++++++++",
-#     "+s          +                 +               ++  +",
-#     "+  +++++++  +++++++++++++  +++++++++++++++++++++  +",
-#     "+  +     +  +           +  +                 +++  +",
-#     "+  +  +  +  +  +  ++++  +  +  +++++++++++++  +++  +",
-#     "+  +  +  +  +  +  +        +  +  +        +       +",
-#     "+  +  ++++  +  ++++++++++  +  +  ++++  +  +  ++   +",
-#     "+  +     +  +          +   +           +  +  ++  ++",
-#     "+  ++++  +  +++++++ ++++++++  +++++++++++++  ++  ++",
-#     "+     +  +     +              +              ++   +",
-#     "++++  +  ++++++++++ +++++++++++  ++++++++++  +++  +",
-#     "+  +  +                    +     +     +  +  +++  +",
-#     "+  +  ++++  +++++++++++++  +  ++++  +  +  +  ++   +",
-#     "+  +  +     +     +     +  +  +     +     +  ++  ++",
-#     "+  +  +  +++++++  ++++  +  +  +  ++++++++++  ++  ++",
-#     "+                       +  +  +              ++  ++",
-#     "+ ++++++             +  +  +  +  +++        +++  ++",
-#     "+ ++++++ ++++++ +++++++++    ++ ++   ++++++++++  ++",
-#     "+ +    +    +++ +     +++++++++ ++  +++++++    + ++",
-#     "+ ++++ ++++ +++ + +++ +++    ++    ++    ++ ++ + ++",
-#     "+ ++++    +     + +++ +++ ++ ++++++++ ++ ++ ++   ++",
-#     "+      ++ +++++++e+++     ++          ++    +++++++",
-#     "+++++++++++++++++++++++++++++++++++++++++++++++++++",
-# ]
-
-
-# grid = [
-#     "+++++++++++++++++++++",
-#     "++++++    +++++++++++",
-#     "++++++   ++++++++++++",
-#     "++++++  +++++++++ e +",
-#     "++++++ +++++++++++  +",
-#     "++++++ ++++++++++++ +",
-#     "++++++ +++++++++++  +",
-#     "++++++             ++",
-#     "+++++++++++++++++  ++",
-#     "+++++++++++++++++  ++",
-#     "+++++++++++++++++  ++",
-#     "++++++++++++++     ++",
-#     "s                  ++",
-#     "+++++++++++++++++++++",
-# ]
-# print(grid)
 
 def setup_maze(grid):  # define a function called setup_maze
-    global start_x, start_y, end_x, end_y  # set up global variables for start and end locations
+    # global start_x, start_y, end_x, end_y  # set up global variables for start and end locations
     for y in range(len(grid)):  # read in the grid line by line
         for x in range(len(grid[y])):  # read each cell in the line
             character = grid[y][x]  # assign the variable "character" the x and y location on the grid
@@ -143,6 +223,7 @@ def setup_maze(grid):  # define a function called setup_maze
             if character == "e":
                 green.color("purple")
                 green.goto(screen_x, screen_y)  # send green sprite to screen location
+                global end_x, end_y, start_x, start_y
                 end_x, end_y = screen_x, screen_y  # assign end locations variables to end_x and end_y
                 green.stamp()
                 green.color("green")
@@ -180,7 +261,7 @@ def bfs(x, y):
             blue.stamp()
             frontier.append(cell)
             visited.add((x, y - 24))
-            print(solution)
+            # print(solution)
 
         if (x + 24, y) in path and (x + 24, y) not in visited:  # check the cell on the  right
             cell = (x + 24, y)
@@ -208,24 +289,24 @@ def dfs(x, y):
     while len(frontier) > 0:
         time.sleep(0.1)
         x, y = frontier.pop()
-        if (x - 24, y) in path and (x - 24, y) not in visited:  # check the cell on the left
+        if (x - 24, y) in path and (x - 24, y) not in visited:
             cell = (x - 24, y)
-            solution[cell] = x, y  # backtracking routine [cell] is the previous cell. x, y is the current cell
-            blue.goto(cell)  # identify frontier cells
+            solution[cell] = x, y
+            blue.goto(cell)
             blue.stamp()
-            frontier.append(cell)  # add cell to frontier list
-            visited.add((x - 24, y))  # add cell to visited list
+            frontier.append(cell)
+            visited.add((x - 24, y))
 
-        if (x, y - 24) in path and (x, y - 24) not in visited:  # check the cell down
+        if (x, y - 24) in path and (x, y - 24) not in visited:
             cell = (x, y - 24)
             solution[cell] = x, y
             blue.goto(cell)
             blue.stamp()
             frontier.append(cell)
             visited.add((x, y - 24))
-            print(solution)
+            # print(solution)
 
-        if (x + 24, y) in path and (x + 24, y) not in visited:  # check the cell on the  right
+        if (x + 24, y) in path and (x + 24, y) not in visited:
             cell = (x + 24, y)
             solution[cell] = x, y
             blue.goto(cell)
@@ -233,7 +314,7 @@ def dfs(x, y):
             frontier.append(cell)
             visited.add((x + 24, y))
 
-        if (x, y + 24) in path and (x, y + 24) not in visited:  # check the cell up
+        if (x, y + 24) in path and (x, y + 24) not in visited:
             cell = (x, y + 24)
             solution[cell] = x, y
             blue.goto(cell)
@@ -243,13 +324,14 @@ def dfs(x, y):
         green.goto(x, y)
         green.stamp()
 
+
 def backRoute(x, y):
     yellow.goto(x, y)
     yellow.stamp()
-    while (x, y) != (start_x, start_y):  # stop loop when current cells == start cell
-        yellow.goto(solution[x, y])  # move the yellow sprite to the key value of solution ()
+    while (x, y) != (start_x, start_y):
+        yellow.goto(solution[x, y])
         yellow.stamp()
-        x, y = solution[x, y]  # "key value" now becomes the new key
+        x, y = solution[x, y]
 
 
 # set up classes
@@ -267,7 +349,8 @@ frontier = deque()
 solution = {}  # solution dictionary
 
 # main program starts here ####
-setup_maze(grid)
-dfs(start_x, start_y)
+create_maze()
+setup_maze(input_grid)
+select_algorithm()
 backRoute(end_x, end_y)
-wn.exitonclick()
+endProgram()

@@ -111,4 +111,26 @@ def create_maze():
                     f.write(line + "\n")
                 window.close()
 
-create_maze()
+# create_maze()
+
+
+def selectAlgorithm():
+    layout = [[sg.Text('Choose the algorithm you want to solve this maze with:')],
+              [sg.Button('BFS'), sg.Button('DFS'), sg.Button('A*')]
+              ]
+
+    window = sg.Window('Select Algorithm', layout)
+
+    while True:
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED:
+            break
+        if event == 'BFS':
+            window.close()
+            bfs(start_x, start_y)
+        elif event == 'DFS':
+            window.close()
+            dfs(start_x, start_y)
+        elif event == 'A*':
+            window.close()
+            print('A* still developing')
