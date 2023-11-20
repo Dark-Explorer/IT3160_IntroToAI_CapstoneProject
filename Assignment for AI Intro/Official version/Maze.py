@@ -25,7 +25,7 @@ def create_maze():
     m = int(values['-ROWS-'])
     n = int(values['-COLS-'])
 
-    layout = [[sg.Button('', size=(2, 1), key=(i,j), pad=(0, 0), button_color=('white', 'white')) for j in range(n)] for i in range(m)]
+    layout = [[sg.Button('', size=(2, 1), key=(i, j), pad=(0, 0), button_color=('white', 'white')) for j in range(n)] for i in range(m)]
     layout.append([sg.Button('Set Start'), sg.Button('Set End'), sg.Button('Set Wall')])
     layout.append([sg.Button('Submit')])
 
@@ -98,22 +98,25 @@ def create_maze():
 
             if start_existed == 0:
                 layout1 = [[sg.Text('Start point not set!')],
-                           [sg.Button('OK')]
-                           ]
-                window1 = sg.Window('Warning',layout1)
+                            [sg.Button('OK')]
+                            ]
+                window1 = sg.Window('Warning', layout1)
                 event1, values1 = window1.read()
                 if event1 == 'OK':
                     window1.close()
 
             if end_existed == 0:
                 layout1 = [[sg.Text('End point not set!')],
-                           [sg.Button('OK')]
-                           ]
+                            [sg.Button('OK')]
+                            ]
                 window1 = sg.Window('Warning', layout1)
                 event1, values1 = window1.read()
                 if event1 == 'OK':
                     window1.close()
-            window.close()
+            if start_existed == 1 and end_existed == 1:
+                break
+
+    window.close()
             # with open('grid.txt', 'w') as f:
             #     for line in grid:
             #         f.write(line + "\n")
