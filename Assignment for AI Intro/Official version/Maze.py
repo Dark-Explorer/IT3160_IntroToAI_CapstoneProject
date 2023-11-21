@@ -8,9 +8,40 @@ global input_grid
 
 
 # Set up the maze with PySimpleGUI
-def create_maze():
-    layout = [[sg.Text('Number of rows:'), sg.Input(key='-ROWS-')],
-              [sg.Text('Number of columns:'), sg.Input(key='-COLS-')],
+def method_setup():
+    layout = [[sg.Text('Select how you want to create maze: ')],
+              [sg.Button('Import File'), sg.Button('Use GUI')]
+              ]
+    window = sg.Window('Welcome', layout)
+    while True:
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED:
+            break
+        if event == 'Use GUI':
+            window.close()
+            create_maze_with_GUI()
+        elif event == 'Import File':
+            import_layout = [[sg.Text('Choose file to import:')],
+                             [sg.Input(), sg.FileBrowse()],
+                             [sg.OK()]
+                             ]
+            window1 = sg.Window('Import File', import_layout)
+            event1, values1 = window1.read()
+            if event1 == 'OK':
+                global input_grid
+                filename = values1[0]
+                with open(filename, 'r') as f:
+                    input_grid = []
+                    for line in f:
+                        row = line.strip()
+                        input_grid.append(row)
+            window1.close()
+            window.close()
+
+
+def create_maze_with_GUI():
+    layout = [[sg.Text('Number of rows:'), sg.Input(size=(5, 1), key='-ROWS-')],
+              [sg.Text('Number of columns:'), sg.Input(size=(5, 1), key='-COLS-')],
               [sg.Button('Submit')]]
 
     window = sg.Window('Maze Setup', layout)
@@ -117,10 +148,6 @@ def create_maze():
                 break
 
     window.close()
-            # with open('grid.txt', 'w') as f:
-            #     for line in grid:
-            #         f.write(line + "\n")
-            #     window.close()
 
 
 def select_algorithm():
@@ -236,7 +263,7 @@ def setup_maze(grid):  # define a function called setup_maze
                 red.goto(screen_x, screen_y)
 
 
-def endProgram():
+def end_program():
     wn.exitonclick()
     sys.exit()
 
@@ -328,7 +355,7 @@ def dfs(x, y):
         green.stamp()
 
 
-def backRoute(x, y):
+def back_route(x, y):
     yellow.goto(x, y)
     yellow.stamp()
     while (x, y) != (start_x, start_y):
@@ -349,11 +376,11 @@ walls = []
 path = []
 visited = set()
 frontier = deque()
-solution = {}  # solution dictionary
+solution = {}
 
-# main program starts here ####
-create_maze()
+# main program starts here
+method_setup()
 setup_maze(input_grid)
 select_algorithm()
-backRoute(end_x, end_y)
-endProgram()
+back_route(end_x, end_y)
+end_program()
