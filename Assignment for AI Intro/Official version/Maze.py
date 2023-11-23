@@ -310,6 +310,14 @@ def bfs(x, y):
             visited.add((x, y + 24))
         green.goto(x, y)
         green.stamp()
+    if (end_x, end_y) not in visited:
+        unreachable = [[sg.Text('No path can be found')]]
+        window2 = sg.Window('Warning', unreachable)
+        while True:
+            event2, values2 = window2.read()
+            if event2 == sg.WINDOW_CLOSED:
+                break
+            window2.close()
 
 
 def dfs(x, y):
@@ -353,6 +361,14 @@ def dfs(x, y):
             visited.add((x, y + 24))
         green.goto(x, y)
         green.stamp()
+    if (end_x, end_y) not in visited:
+        unreachable = [[sg.Text('No path can be found')]]
+        window2 = sg.Window('Warning', unreachable)
+        while True:
+            event2, values2 = window2.read()
+            if event2 == sg.WINDOW_CLOSED:
+                break
+            window2.close()
 
 
 def back_route(x, y):
@@ -383,4 +399,4 @@ method_setup()
 setup_maze(input_grid)
 select_algorithm()
 back_route(end_x, end_y)
-end_program()
+wn.exitonclick()
