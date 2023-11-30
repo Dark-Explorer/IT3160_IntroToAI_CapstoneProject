@@ -169,7 +169,7 @@ def select_algorithm():
             dfs(start_x, start_y)
         elif event == 'A*':
             window.close()
-            print('A* still developing')
+            aStar(start_x, start_y)
 
 
 # Maze by Turtle
@@ -369,6 +369,44 @@ def dfs(x, y):
             if event2 == sg.WINDOW_CLOSED:
                 break
             window2.close()
+
+def aStar(start_x, start_y):
+    def heuristic(x, y):
+        return abs(x - end_x) + abs(y - end_y)
+
+    frontier = [(start_x, start_y)]
+    cost_so_far = {(start_x, start_y): 0}
+    solution[start_x, start_y] = None
+
+    while frontier:
+        frontier = sorted(frontier, key=lambda k: cost_so_far[k])
+        current_x, current_y = frontier.pop(0)
+
+        if (current_x, current_y) == (end_x, end_y):
+            break
+
+        for next_x, next_y in [(current_x, current_y - 24), (current_x, current_y + 24), (current_x - 24, current_y), (current_x + 24, current_y)]:
+            new_cost = cost_so_far[(current_x, current_y)] + 1  # Assuming uniform cost for simplicity
+
+            if (next_x, next_y) in path and ((next_x, next_y) not in cost_so_far or new_cost < cost_so_far[(next_x, next_y)]):
+                cost_so_far[(next_x, next_y)] = new_cost
+                priority = new_cost + heuristic(next_x, next_y)
+                frontier.append((next_x, next_y))
+                solution[next_x, next_y] = (current_x, current_y)
+
+                # Highlight the visited cell
+                green.goto(next_x, next_y)
+                green.stamp()
+
+    if (end_x, end_y) not in solution:
+        unreachable = [[sg.Text('No path can be found')]]
+        window2 = sg.Window('Warning', unreachable)
+        while True:
+            event2, values2 = window2.read()
+            if event2 == sg.WINDOW_CLOSED:
+                break
+        window2.close()
+
 
 
 def back_route(x, y):
