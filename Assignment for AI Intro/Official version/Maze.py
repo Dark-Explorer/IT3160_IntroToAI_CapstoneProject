@@ -169,7 +169,12 @@ def select_algorithm():
             dfs(start_x, start_y)
         elif event == 'A*':
             window.close()
+<<<<<<< Updated upstream
             print('A* still developing')
+=======
+            end_node = (end_x, end_y)
+            aStar(input_grid, start_x, start_y, end_node)
+>>>>>>> Stashed changes
 
 
 # Maze by Turtle
@@ -370,6 +375,73 @@ def dfs(x, y):
                 break
             window2.close()
 
+<<<<<<< Updated upstream
+=======
+def heuristic(a, b):
+    return abs(a[0]-b[0]) + abs(a[1]-b[1])
+
+def get_neighbors(maze, node):
+    x,y = node
+    neighbors = [(x, y + 24), (x + 24, y), (x, y - 24), (x - 24, y)]
+    # return [neighbor for neighbor in neighbors if maze[neighbor[0]][neighbor[1]] == ' ']
+    return [neighbor for neighbor in neighbors]
+
+def aStar(maze, x, y, end):
+
+    start = (x, y)
+    time.sleep(0.1)
+    open_set = set()
+    closed_set = set()
+    came_from = {}
+
+    g_score = {start: 0}
+    h_score = {start: heuristic(start, end)}
+    f_score = {start: h_score[start]}
+
+    solution[x, y] = x, y
+
+    open_set.add(start)
+
+    while open_set:
+        current = min(open_set, key=lambda node: f_score[node])
+
+        if current == end:
+            break
+
+        open_set.remove(current)
+        closed_set.add(current)
+
+        for neighbor in get_neighbors(maze, current):
+            if neighbor in path:
+                if neighbor in closed_set:
+                    continue
+
+                tentative_g_score = g_score[current] + 24
+                
+                if neighbor not in open_set or tentative_g_score < g_score[neighbor]:
+                    came_from[neighbor] = current
+                    g_score[neighbor] = tentative_g_score
+                    h_score[neighbor] = heuristic(neighbor, end)
+                    f_score[neighbor] = g_score[neighbor] + h_score[neighbor]
+
+                    cell = (neighbor[0],neighbor[1])
+                    solution[cell] = current[0],current[1]
+
+                    if neighbor not in open_set:
+                        open_set.add(neighbor)
+                    blue.goto(neighbor)
+                    blue.stamp()
+        green.goto(current)
+        green.stamp()
+    if end not in solution:
+        unreachable = [[sg.Text('No path can be found')]]
+        window2 = sg.Window('Warning', unreachable)
+        while True:
+            event2, values2 = window2.read()
+            if event2 == sg.WINDOW_CLOSED:
+                break
+        window2.close()
+>>>>>>> Stashed changes
 
 def back_route(x, y):
     yellow.goto(x, y)
