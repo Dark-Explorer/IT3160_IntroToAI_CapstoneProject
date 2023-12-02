@@ -235,12 +235,24 @@ class Yellow(turtle.Turtle):
 
 
 def setup_maze(grid):  # define a function called setup_maze
-    # global start_x, start_y, end_x, end_y  # set up global variables for start and end locations
+    # Tính toán tọa độ để đặt maze ở giữa màn hình
+    maze_width = len(grid[0]) * 24
+    maze_height = len(grid) * 24
+
+    screen_x_start = -maze_width / 2
+    screen_y_start = maze_height / 2
+
+
+
     for y in range(len(grid)):  # read in the grid line by line
         for x in range(len(grid[y])):  # read each cell in the line
             character = grid[y][x]  # assign the variable "character" the x and y location on the grid
-            screen_x = -588 + (x * 24)  # move to the x location on the screen staring at -588
-            screen_y = 288 - (y * 24)  # move to the y location of the screen starting at 288
+
+            screen_x = x*24 + screen_x_start
+            screen_y = screen_y_start - y*24
+            wn_x = screen_x_start + screen_x
+            wn_y = screen_y_start + screen_y
+            maze.goto(wn_x, wn_y)
 
             if character == "+":
                 maze.goto(screen_x, screen_y)  # move pen to the x and y location and
