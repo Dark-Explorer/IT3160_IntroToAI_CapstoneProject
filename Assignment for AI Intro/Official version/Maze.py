@@ -169,12 +169,8 @@ def select_algorithm():
             dfs(start_x, start_y)
         elif event == 'A*':
             window.close()
-<<<<<<< Updated upstream
-            print('A* still developing')
-=======
             end_node = (end_x, end_y)
             aStar(input_grid, start_x, start_y, end_node)
->>>>>>> Stashed changes
 
 
 # Maze by Turtle
@@ -375,8 +371,7 @@ def dfs(x, y):
                 break
             window2.close()
 
-<<<<<<< Updated upstream
-=======
+
 def heuristic(a, b):
     return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
@@ -441,7 +436,6 @@ def aStar(maze, x, y, end):
             if event2 == sg.WINDOW_CLOSED:
                 break
         window2.close()
->>>>>>> Stashed changes
 
 def back_route(x, y):
     yellow.goto(x, y)
