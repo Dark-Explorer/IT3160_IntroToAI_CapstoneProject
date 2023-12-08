@@ -176,7 +176,7 @@ def select_algorithm():
 wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Maze Solving Program")
-wn.setup(1300, 700)
+wn.setup(10, 10)
 
 global start_x, start_y, end_x, end_y
 
@@ -241,44 +241,62 @@ class Black(turtle.Turtle):
 #         row = line.strip()
 #         grid.append(row)
 
+def update_window_size(grid):
+    base_cell_size = 24  # Kích thước cơ bản cho mỗi ô
+    num_rows = len(grid)
+    num_cols = len(grid[0])
 
-def setup_maze(grid):  # define a function called setup_maze
-    # Tính toán tọa độ để đặt maze ở giữa màn hình
+    # Tính toán kích thước cửa sổ mới
+    window_width = num_cols * base_cell_size
+    window_height = num_rows * base_cell_size
+
+    # Cập nhật kích thước cửa sổ
+    wn.setup(width=window_width + 50, height=window_height + 50)
+
+
+def setup_maze(grid):  # Define a function called setup_maze
+
+    update_window_size(input_grid)
+    # Calculate the start coordinates to center the maze on the screen
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
 
     screen_x_start = -maze_width / 2
     screen_y_start = maze_height / 2
 
-    for y in range(len(grid)):  # read in the grid line by line
-        for x in range(len(grid[y])):  # read each cell in the line
-            character = grid[y][x]  # assign the variable "character" the x and y location on the grid
+    for y in range(len(grid)):  # Read in the grid line by line
+        for x in range(len(grid[y])):  # Read each cell in the line
+            character = grid[y][x]  # Assign the variable "character" the x and y location on the grid
 
-            screen_x = x*24 + screen_x_start
-            screen_y = screen_y_start - y*24
-            wn_x = screen_x_start + screen_x
-            wn_y = screen_y_start + screen_y
-            maze.goto(wn_x, wn_y)
+            screen_x = (x * 24) + screen_x_start
+            screen_y = screen_y_start - (y * 24)
 
-            if character == "+":
-                maze.goto(screen_x, screen_y)  # move pen to the x and y location and
-                maze.stamp()  # stamp a copy of the turtle on the screen
-                walls.append((screen_x, screen_y))  # add coordinate to walls list
+            # Move to the correct location
+            maze.goto(screen_x, screen_y)
 
-            if character == " " or character == "e":
-                path.append((screen_x, screen_y))  # add " " and e to path list
+            # Check what the cell represents and act accordingly
+            if character == "+":  # Wall
+                maze.stamp()  # Stamp a wall square
+                walls.append((screen_x, screen_y))  # Add coordinate to walls list
 
-            if character == "e":
+            elif character == " " or character == "e":  # Path or End
+                path.append((screen_x, screen_y))  # Add to path list
+
+            if character == "e":  # End point
                 green.color("purple")
-                green.goto(screen_x, screen_y)  # send green sprite to screen location
-                global end_x, end_y, start_x, start_y
-                end_x, end_y = screen_x, screen_y  # assign end locations variables to end_x and end_y
+                green.goto(screen_x, screen_y)
                 green.stamp()
                 green.color("green")
+                global end_x, end_y
+                end_x, end_y = screen_x, screen_y  # Assign end location variables
 
-            if character == "s":
-                start_x, start_y = screen_x, screen_y  # assign start locations variables to start_x and start_y
+            if character == "s":  # Start point
+                global start_x, start_y
+                start_x, start_y = screen_x, screen_y
                 red.goto(screen_x, screen_y)
+                red.stamp()
+
+    # Gọi hàm này sau khi tạo xong maze
 
 
 def end_program():
@@ -393,65 +411,35 @@ def dfs(x, y):
                 break
             window2.close()
 
+def aStar(start_x, start_y):
+    def heuristic(x, y):
+        return abs(x - end_x) + abs(y - end_y)
 
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+    frontier = [(start_x, start_y)]
+    cost_so_far = {(start_x, start_y): 0}
+    solution[start_x, start_y] = None
 
+    while frontier:
+        frontier = sorted(frontier, key=lambda k: cost_so_far[k])
+        current_x, current_y = frontier.pop(0)
 
-def get_neighbors(node):
-    x, y = node
-    neighbors = [(x, y + 24), (x + 24, y), (x, y - 24), (x - 24, y)]
-    # return [neighbor for neighbor in neighbors if maze[neighbor[0]][neighbor[1]] == ' ']
-    return [neighbor for neighbor in neighbors]
-
-
-def aStar(x, y, end):
-    start = (x, y)
-    time.sleep(0.1)
-    open_set = set()
-    closed_set = set()
-    came_from = {}
-
-    g_score = {start: 0}
-    h_score = {start: heuristic(start, end)}
-    f_score = {start: h_score[start]}
-
-    solution[x, y] = x, y
-
-    open_set.add(start)
-
-    while open_set:
-        current = min(open_set, key=lambda node: f_score[node])
-
-        if current == end:
+        if (current_x, current_y) == (end_x, end_y):
             break
 
-        open_set.remove(current)
-        closed_set.add(current)
+        for next_x, next_y in [(current_x, current_y - 24), (current_x, current_y + 24), (current_x - 24, current_y), (current_x + 24, current_y)]:
+            new_cost = cost_so_far[(current_x, current_y)] + 1  # Assuming uniform cost for simplicity
 
-        for neighbor in get_neighbors(current):
-            if neighbor in path:
-                if neighbor in closed_set:
-                    continue
+            if (next_x, next_y) in path and ((next_x, next_y) not in cost_so_far or new_cost < cost_so_far[(next_x, next_y)]):
+                cost_so_far[(next_x, next_y)] = new_cost
+                priority = new_cost + heuristic(next_x, next_y)
+                frontier.append((next_x, next_y))
+                solution[next_x, next_y] = (current_x, current_y)
 
-                tentative_g_score = g_score[current] + 24
+                # Highlight the visited cell
+                green.goto(next_x, next_y)
+                green.stamp()
 
-                if neighbor not in open_set or tentative_g_score < g_score[neighbor]:
-                    came_from[neighbor] = current
-                    g_score[neighbor] = tentative_g_score
-                    h_score[neighbor] = heuristic(neighbor, end)
-                    f_score[neighbor] = g_score[neighbor] + h_score[neighbor]
-
-                    cell = (neighbor[0], neighbor[1])
-                    solution[cell] = current[0], current[1]
-
-                    if neighbor not in open_set:
-                        open_set.add(neighbor)
-                    blue.goto(neighbor)
-                    blue.stamp()
-        green.goto(current)
-        green.stamp()
-    if end not in solution:
+    if (end_x, end_y) not in solution:
         unreachable = [[sg.Text('No path can be found')]]
         window2 = sg.Window('Warning', unreachable)
         while True:
