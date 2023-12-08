@@ -176,7 +176,7 @@ def select_algorithm():
 wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Maze Solving Program")
-wn.setup(1300, 700)
+wn.setup(10, 10)
 
 global start_x, start_y, end_x, end_y
 
@@ -240,21 +240,6 @@ class Black(turtle.Turtle):
 #     for line in f:
 #         row = line.strip()
 #         grid.append(row)
-
-
-def adjust_window_size(rows, cols):
-    # Giả sử mỗi ô có kích thước cơ bản là 24x24 pixels
-    base_cell_size = 24
-    max_width = 800  # Giới hạn kích thước cửa sổ tối đa
-    max_height = 600
-
-    # Tính kích thước cửa sổ dựa trên maze
-    window_width = min(cols * base_cell_size, max_width)
-    window_height = min(rows * base_cell_size, max_height)
-
-    # Điều chỉnh kích thước cửa sổ
-    wn.setup(width=window_width, height=window_height)
-
 
 def update_window_size(grid):
     base_cell_size = 24  # Kích thước cơ bản cho mỗi ô
