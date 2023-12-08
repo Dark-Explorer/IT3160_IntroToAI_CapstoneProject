@@ -1,6 +1,7 @@
 import turtle
 import time
 import sys
+import math
 from collections import deque
 import PySimpleGUI as sg
 
@@ -394,64 +395,56 @@ def dfs(x, y):
             window2.close()
 
 
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+def heuristic(x):
+    return math.sqrt(abs(x[0] - end_x)*abs(x[0] - end_x) - abs(x[1] - end_y)*abs(x[1] - end_y))
 
-
-def get_neighbors(node):
-    x, y = node
-    neighbors = [(x, y + 24), (x + 24, y), (x, y - 24), (x - 24, y)]
-    # return [neighbor for neighbor in neighbors if maze[neighbor[0]][neighbor[1]] == ' ']
-    return [neighbor for neighbor in neighbors]
-
-
-def aStar(x, y, end):
+def aStar(x, y):
     start = (x, y)
-    time.sleep(0.1)
     open_set = set()
     closed_set = set()
     came_from = {}
 
-    g_score = {start: 0}
-    h_score = {start: heuristic(start, end)}
-    f_score = {start: h_score[start]}
+    g_score = {(x, y): 0}
+    h_score = {(x, y): heuristic(start)}
+    f_score = {(x, y): h_score[(x, y)]}
 
-    solution[x, y] = x, y
-
-    open_set.add(start)
+    solution[x, y]= x, y
+    open_set.add((x, y))
 
     while open_set:
-        current = min(open_set, key=lambda node: f_score[node])
+        time.sleep(0.2)
+        (a, b) = min(open_set, key=lambda node: f_score[node])
 
-        if current == end:
+        if (a, b) == (end_x, end_y):
             break
 
-        open_set.remove(current)
-        closed_set.add(current)
+        open_set.remove((a, b))
+        closed_set.add((a, b))
 
-        for neighbor in get_neighbors(current):
+        for neighbor in [(a + 24, b), (a - 24, b), (a, b + 24), (a, b - 24)]:
             if neighbor in path:
                 if neighbor in closed_set:
                     continue
 
-                tentative_g_score = g_score[current] + 24
-
+                tentative_g_score = g_score[(a, b)] + 24
+                
                 if neighbor not in open_set or tentative_g_score < g_score[neighbor]:
-                    came_from[neighbor] = current
+                    came_from[neighbor] = (a, b)
                     g_score[neighbor] = tentative_g_score
-                    h_score[neighbor] = heuristic(neighbor, end)
+                    h_score[neighbor] = heuristic(neighbor)
                     f_score[neighbor] = g_score[neighbor] + h_score[neighbor]
 
-                    cell = (neighbor[0], neighbor[1])
-                    solution[cell] = current[0], current[1]
+                    solution[neighbor] = a, b
 
                     if neighbor not in open_set:
                         open_set.add(neighbor)
                     blue.goto(neighbor)
                     blue.stamp()
-        green.goto(current)
+
+        green.goto(a, b)
         green.stamp()
-    if end not in solution:
+
+    if (end_x, end_y) not in solution:
         unreachable = [[sg.Text('No path can be found')]]
         window2 = sg.Window('Warning', unreachable)
         while True:
