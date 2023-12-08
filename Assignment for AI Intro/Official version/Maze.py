@@ -411,33 +411,55 @@ def dfs(x, y):
                 break
             window2.close()
 
-def aStar(start_x, start_y):
-    def heuristic(x, y):
-        return abs(x - end_x) + abs(y - end_y)
 
-    frontier = [(start_x, start_y)]
-    cost_so_far = {(start_x, start_y): 0}
-    solution[start_x, start_y] = None
+def heuristic(x, y):
+    return abs(x - end_x) * abs(x - end_x) + abs(y - end_y) * abs(y - end_y)
 
-    while frontier:
-        frontier = sorted(frontier, key=lambda k: cost_so_far[k])
-        current_x, current_y = frontier.pop(0)
 
-        if (current_x, current_y) == (end_x, end_y):
+def aStar(x, y):
+    open_set = set()
+    closed_set = set()
+    came_from = {}
+
+    g_score = {(x, y): 0}
+    h_score = {(x, y): heuristic(x, y)}
+    f_score = {(x, y): h_score[(x, y)]}
+
+    solution[x, y] = x, y
+    open_set.add((x, y))
+
+    while open_set:
+        time.sleep(0.2)
+        (a, b) = min(open_set, key=lambda node: f_score[node])
+
+        if (a, b) == (end_x, end_y):
             break
 
-        for next_x, next_y in [(current_x, current_y - 24), (current_x, current_y + 24), (current_x - 24, current_y), (current_x + 24, current_y)]:
-            new_cost = cost_so_far[(current_x, current_y)] + 1  # Assuming uniform cost for simplicity
+        open_set.remove((a, b))
+        closed_set.add((a, b))
 
-            if (next_x, next_y) in path and ((next_x, next_y) not in cost_so_far or new_cost < cost_so_far[(next_x, next_y)]):
-                cost_so_far[(next_x, next_y)] = new_cost
-                priority = new_cost + heuristic(next_x, next_y)
-                frontier.append((next_x, next_y))
-                solution[next_x, next_y] = (current_x, current_y)
+        for (next_x, next_y) in [(a + 24, b), (a - 24, b), (a, b + 24), (a, b - 24)]:
+            if (next_x, next_y) in path:
+                if (next_x, next_y) in closed_set:
+                    continue
 
-                # Highlight the visited cell
-                green.goto(next_x, next_y)
-                green.stamp()
+                tentative_g_score = g_score[(a, b)] + 24
+
+                if (next_x, next_y) not in open_set or tentative_g_score < g_score[(next_x, next_y)]:
+                    came_from[(next_x, next_y)] = (a, b)
+                    g_score[(next_x, next_y)] = tentative_g_score
+                    h_score[(next_x, next_y)] = heuristic(next_x, next_y)
+                    f_score[(next_x, next_y)] = g_score[(next_x, next_y)] + h_score[(next_x, next_y)]
+
+                    solution[(next_x, next_y)] = a, b
+
+                    if (next_x, next_y) not in open_set:
+                        open_set.add((next_x, next_y))
+                    blue.goto((next_x, next_y))
+                    blue.stamp()
+
+        green.goto(a, b)
+        green.stamp()
 
     if (end_x, end_y) not in solution:
         unreachable = [[sg.Text('No path can be found')]]
