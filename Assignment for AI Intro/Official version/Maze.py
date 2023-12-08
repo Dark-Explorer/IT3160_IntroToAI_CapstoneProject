@@ -255,6 +255,17 @@ def adjust_window_size(rows, cols):
     # Điều chỉnh kích thước cửa sổ
     wn.setup(width=window_width, height=window_height)
 
+def update_window_size(grid):
+    base_cell_size = 24  # Kích thước cơ bản cho mỗi ô
+    num_rows = len(grid)
+    num_cols = len(grid[0])
+
+    # Tính toán kích thước cửa sổ mới
+    window_width = num_cols * base_cell_size
+    window_height = num_rows * base_cell_size
+
+    # Cập nhật kích thước cửa sổ
+    wn.setup(width=window_width + 50, height=window_height + 50)
 
 
 def setup_maze(grid):  # Define a function called setup_maze
@@ -297,6 +308,9 @@ def setup_maze(grid):  # Define a function called setup_maze
                 start_x, start_y = screen_x, screen_y
                 red.goto(screen_x, screen_y)
                 red.stamp()
+
+    # Gọi hàm này sau khi tạo xong maze
+    update_window_size(input_grid)
 
 
 def end_program():
