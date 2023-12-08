@@ -227,6 +227,14 @@ class Yellow(turtle.Turtle):
         self.speed(0)
 
 
+class Black(turtle.Turtle):
+    def __init__(self):
+        turtle.Turtle.__init__(self)
+        self.shape("square")
+        self.color("black")
+        self.penup()
+        self.speed(0)
+
 # with open('grid.txt', 'r') as f:
 #     grid = []
 #     for line in f:
@@ -234,45 +242,61 @@ class Yellow(turtle.Turtle):
 #         grid.append(row)
 
 
-def setup_maze(grid):  # define a function called setup_maze
-    # Tính toán tọa độ để đặt maze ở giữa màn hình
+def adjust_window_size(rows, cols):
+    # Giả sử mỗi ô có kích thước cơ bản là 24x24 pixels
+    base_cell_size = 24
+    max_width = 800  # Giới hạn kích thước cửa sổ tối đa
+    max_height = 600
+
+    # Tính kích thước cửa sổ dựa trên maze
+    window_width = min(cols * base_cell_size, max_width)
+    window_height = min(rows * base_cell_size, max_height)
+
+    # Điều chỉnh kích thước cửa sổ
+    wn.setup(width=window_width, height=window_height)
+
+
+
+def setup_maze(grid):  # Define a function called setup_maze
+    
+    # Calculate the start coordinates to center the maze on the screen
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
 
     screen_x_start = -maze_width / 2
     screen_y_start = maze_height / 2
 
+    for y in range(len(grid)):  # Read in the grid line by line
+        for x in range(len(grid[y])):  # Read each cell in the line
+            character = grid[y][x]  # Assign the variable "character" the x and y location on the grid
 
+            screen_x = (x * 24) + screen_x_start
+            screen_y = screen_y_start - (y * 24)
 
-    for y in range(len(grid)):  # read in the grid line by line
-        for x in range(len(grid[y])):  # read each cell in the line
-            character = grid[y][x]  # assign the variable "character" the x and y location on the grid
+            # Move to the correct location
+            maze.goto(screen_x, screen_y)
 
-            screen_x = x*24 + screen_x_start
-            screen_y = screen_y_start - y*24
-            wn_x = screen_x_start + screen_x
-            wn_y = screen_y_start + screen_y
-            maze.goto(wn_x, wn_y)
+            # Check what the cell represents and act accordingly
+            if character == "+":  # Wall
+                maze.stamp()  # Stamp a wall square
+                walls.append((screen_x, screen_y))  # Add coordinate to walls list
 
-            if character == "+":
-                maze.goto(screen_x, screen_y)  # move pen to the x and y location and
-                maze.stamp()  # stamp a copy of the turtle on the screen
-                walls.append((screen_x, screen_y))  # add coordinate to walls list
+            elif character == " " or character == "e":  # Path or End
+                path.append((screen_x, screen_y))  # Add to path list
 
-            if character == " " or character == "e":
-                path.append((screen_x, screen_y))  # add " " and e to path list
-
-            if character == "e":
+            if character == "e":  # End point
                 green.color("purple")
-                green.goto(screen_x, screen_y)  # send green sprite to screen location
-                global end_x, end_y, start_x, start_y
-                end_x, end_y = screen_x, screen_y  # assign end locations variables to end_x and end_y
+                green.goto(screen_x, screen_y)
                 green.stamp()
                 green.color("green")
+                global end_x, end_y
+                end_x, end_y = screen_x, screen_y  # Assign end location variables
 
-            if character == "s":
-                start_x, start_y = screen_x, screen_y  # assign start locations variables to start_x and start_y
+            if character == "s":  # Start point
+                global start_x, start_y
+                start_x, start_y = screen_x, screen_y
                 red.goto(screen_x, screen_y)
+                red.stamp()
 
 
 def end_program():
@@ -288,6 +312,8 @@ def bfs(x, y):
         time.sleep(0.1)
         x, y = frontier.popleft()  # pop next entry in the frontier queue an assign to x and y location
 
+        if (end_x, end_y) in visited:
+            break
         if (x - 24, y) in path and (x - 24, y) not in visited:  # check the cell on the left
             cell = (x - 24, y)
             solution[cell] = x, y  # backtracking routine [cell] is the previous cell. x, y is the current cell
@@ -339,6 +365,9 @@ def dfs(x, y):
     while len(frontier) > 0:
         time.sleep(0.1)
         x, y = frontier.pop()
+
+        if (end_x, end_y) in visited:
+            break
         if (x - 24, y) in path and (x - 24, y) not in visited:
             cell = (x - 24, y)
             solution[cell] = x, y
@@ -382,35 +411,65 @@ def dfs(x, y):
                 break
             window2.close()
 
-def aStar(start_x, start_y):
-    def heuristic(x, y):
-        return abs(x - end_x) + abs(y - end_y)
 
-    frontier = [(start_x, start_y)]
-    cost_so_far = {(start_x, start_y): 0}
-    solution[start_x, start_y] = None
+def heuristic(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-    while frontier:
-        frontier = sorted(frontier, key=lambda k: cost_so_far[k])
-        current_x, current_y = frontier.pop(0)
 
-        if (current_x, current_y) == (end_x, end_y):
+def get_neighbors(node):
+    x, y = node
+    neighbors = [(x, y + 24), (x + 24, y), (x, y - 24), (x - 24, y)]
+    # return [neighbor for neighbor in neighbors if maze[neighbor[0]][neighbor[1]] == ' ']
+    return [neighbor for neighbor in neighbors]
+
+
+def aStar(x, y, end):
+    start = (x, y)
+    time.sleep(0.1)
+    open_set = set()
+    closed_set = set()
+    came_from = {}
+
+    g_score = {start: 0}
+    h_score = {start: heuristic(start, end)}
+    f_score = {start: h_score[start]}
+
+    solution[x, y] = x, y
+
+    open_set.add(start)
+
+    while open_set:
+        current = min(open_set, key=lambda node: f_score[node])
+
+        if current == end:
             break
 
-        for next_x, next_y in [(current_x, current_y - 24), (current_x, current_y + 24), (current_x - 24, current_y), (current_x + 24, current_y)]:
-            new_cost = cost_so_far[(current_x, current_y)] + 1  # Assuming uniform cost for simplicity
+        open_set.remove(current)
+        closed_set.add(current)
 
-            if (next_x, next_y) in path and ((next_x, next_y) not in cost_so_far or new_cost < cost_so_far[(next_x, next_y)]):
-                cost_so_far[(next_x, next_y)] = new_cost
-                priority = new_cost + heuristic(next_x, next_y)
-                frontier.append((next_x, next_y))
-                solution[next_x, next_y] = (current_x, current_y)
+        for neighbor in get_neighbors(current):
+            if neighbor in path:
+                if neighbor in closed_set:
+                    continue
 
-                # Highlight the visited cell
-                green.goto(next_x, next_y)
-                green.stamp()
+                tentative_g_score = g_score[current] + 24
 
-    if (end_x, end_y) not in solution:
+                if neighbor not in open_set or tentative_g_score < g_score[neighbor]:
+                    came_from[neighbor] = current
+                    g_score[neighbor] = tentative_g_score
+                    h_score[neighbor] = heuristic(neighbor, end)
+                    f_score[neighbor] = g_score[neighbor] + h_score[neighbor]
+
+                    cell = (neighbor[0], neighbor[1])
+                    solution[cell] = current[0], current[1]
+
+                    if neighbor not in open_set:
+                        open_set.add(neighbor)
+                    blue.goto(neighbor)
+                    blue.stamp()
+        green.goto(current)
+        green.stamp()
+    if end not in solution:
         unreachable = [[sg.Text('No path can be found')]]
         window2 = sg.Window('Warning', unreachable)
         while True:
@@ -418,7 +477,6 @@ def aStar(start_x, start_y):
             if event2 == sg.WINDOW_CLOSED:
                 break
         window2.close()
-
 
 
 def back_route(x, y):
@@ -436,6 +494,7 @@ red = Red()
 blue = Blue()
 green = Green()
 yellow = Yellow()
+black = Black()
 
 # setup lists
 walls = []
