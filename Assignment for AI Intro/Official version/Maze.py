@@ -255,6 +255,7 @@ def adjust_window_size(rows, cols):
     # Điều chỉnh kích thước cửa sổ
     wn.setup(width=window_width, height=window_height)
 
+
 def update_window_size(grid):
     base_cell_size = 24  # Kích thước cơ bản cho mỗi ô
     num_rows = len(grid)
@@ -269,7 +270,8 @@ def update_window_size(grid):
 
 
 def setup_maze(grid):  # Define a function called setup_maze
-    
+
+    update_window_size(input_grid)
     # Calculate the start coordinates to center the maze on the screen
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
@@ -310,7 +312,6 @@ def setup_maze(grid):  # Define a function called setup_maze
                 red.stamp()
 
     # Gọi hàm này sau khi tạo xong maze
-    update_window_size(input_grid)
 
 
 def end_program():
