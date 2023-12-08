@@ -395,8 +395,8 @@ def dfs(x, y):
             window2.close()
 
 
-def heuristic(x):
-    return abs(x[0] - end_x) + abs(x[1] - end_y)
+def heuristic(x, y):
+    return abs(x - end_x) + abs(y - end_y)
 
 def aStar(x, y):
     start = (x, y)
@@ -405,7 +405,7 @@ def aStar(x, y):
     came_from = {}
 
     g_score = {(x, y): 0}
-    h_score = {(x, y): heuristic(start)}
+    h_score = {(x, y): heuristic(x, y)}
     f_score = {(x, y): h_score[(x, y)]}
 
     solution[x, y]= x, y
@@ -421,24 +421,24 @@ def aStar(x, y):
         open_set.remove((a, b))
         closed_set.add((a, b))
 
-        for neighbor in [(a + 24, b), (a - 24, b), (a, b + 24), (a, b - 24)]:
-            if neighbor in path:
-                if neighbor in closed_set:
+        for (next_x, next_y) in [(a + 24, b), (a - 24, b), (a, b + 24), (a, b - 24)]:
+            if (next_x, next_y) in path:
+                if (next_x, next_y) in closed_set:
                     continue
 
                 tentative_g_score = g_score[(a, b)] + 24
                 
-                if neighbor not in open_set or tentative_g_score < g_score[neighbor]:
-                    came_from[neighbor] = (a, b)
-                    g_score[neighbor] = tentative_g_score
-                    h_score[neighbor] = heuristic(neighbor)
-                    f_score[neighbor] = g_score[neighbor] + h_score[neighbor]
+                if (next_x, next_y) not in open_set or tentative_g_score < g_score[(next_x, next_y)]:
+                    came_from[(next_x, next_y)] = (a, b)
+                    g_score[(next_x, next_y)] = tentative_g_score
+                    h_score[(next_x, next_y)] = heuristic(next_x, next_y)
+                    f_score[(next_x, next_y)] = g_score[(next_x, next_y)] + h_score[(next_x, next_y)]
 
-                    solution[neighbor] = a, b
+                    solution[(next_x, next_y)] = a, b
 
-                    if neighbor not in open_set:
-                        open_set.add(neighbor)
-                    blue.goto(neighbor)
+                    if (next_x, next_y) not in open_set:
+                        open_set.add((next_x, next_y))
+                    blue.goto((next_x, next_y))
                     blue.stamp()
 
         green.goto(a, b)
