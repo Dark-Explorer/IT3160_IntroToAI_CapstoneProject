@@ -1,7 +1,6 @@
 import turtle
 import time
 import sys
-import math
 from collections import deque
 import PySimpleGUI as sg
 
@@ -396,10 +395,10 @@ def dfs(x, y):
 
 
 def heuristic(x, y):
-    return abs(x - end_x) + abs(y - end_y)
+    return abs(x - end_x) * abs(x - end_x) + abs(y - end_y) * abs(y - end_y)
+
 
 def aStar(x, y):
-    start = (x, y)
     open_set = set()
     closed_set = set()
     came_from = {}
@@ -408,7 +407,7 @@ def aStar(x, y):
     h_score = {(x, y): heuristic(x, y)}
     f_score = {(x, y): h_score[(x, y)]}
 
-    solution[x, y]= x, y
+    solution[x, y] = x, y
     open_set.add((x, y))
 
     while open_set:
@@ -452,6 +451,7 @@ def aStar(x, y):
             if event2 == sg.WINDOW_CLOSED:
                 break
         window2.close()
+
 
 def back_route(x, y):
     yellow.goto(x, y)
