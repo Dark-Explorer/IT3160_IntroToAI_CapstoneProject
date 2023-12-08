@@ -170,7 +170,7 @@ def select_algorithm():
             dfs(start_x, start_y)
         elif event == 'A*':
             window.close()
-            print('A* still developing')
+            aStar(start_x, start_y)
 
 
 # Maze by Turtle
@@ -396,7 +396,7 @@ def dfs(x, y):
 
 
 def heuristic(x):
-    return math.sqrt(abs(x[0] - end_x)*abs(x[0] - end_x) - abs(x[1] - end_y)*abs(x[1] - end_y))
+    return abs(x[0] - end_x) + abs(x[1] - end_y)
 
 def aStar(x, y):
     start = (x, y)
