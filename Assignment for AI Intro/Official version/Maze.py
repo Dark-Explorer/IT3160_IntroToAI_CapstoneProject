@@ -5,7 +5,7 @@ from collections import deque
 import PySimpleGUI as sg
 
 global input_grid
-
+global start_x, start_y, end_x, end_y
 
 # Set up the maze with PySimpleGUI
 def method_setup():
@@ -178,9 +178,6 @@ wn.bgcolor("black")
 wn.title("Maze Solving Program")
 wn.setup(10, 10)
 
-global start_x, start_y, end_x, end_y
-
-
 class Maze(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -242,45 +239,39 @@ class Black(turtle.Turtle):
 #         grid.append(row)
 
 def update_window_size(grid):
-    base_cell_size = 24  # Kích thước cơ bản cho mỗi ô
+    base_cell_size = 24
     num_rows = len(grid)
     num_cols = len(grid[0])
 
-    # Tính toán kích thước cửa sổ mới
     window_width = num_cols * base_cell_size
     window_height = num_rows * base_cell_size
 
-    # Cập nhật kích thước cửa sổ
     wn.setup(width=window_width + 50, height=window_height + 50)
 
 
-def setup_maze(grid):  # Define a function called setup_maze
-
+def setup_maze(grid):
     update_window_size(input_grid)
-    # Calculate the start coordinates to center the maze on the screen
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
 
     screen_x_start = -maze_width / 2
     screen_y_start = maze_height / 2
 
-    for y in range(len(grid)):  # Read in the grid line by line
-        for x in range(len(grid[y])):  # Read each cell in the line
-            character = grid[y][x]  # Assign the variable "character" the x and y location on the grid
+    for y in range(len(grid)):
+        for x in range(len(grid[y])):
+            character = grid[y][x]
 
             screen_x = (x * 24) + screen_x_start
             screen_y = screen_y_start - (y * 24)
 
-            # Move to the correct location
             maze.goto(screen_x, screen_y)
 
-            # Check what the cell represents and act accordingly
             if character == "+":  # Wall
-                maze.stamp()  # Stamp a wall square
-                walls.append((screen_x, screen_y))  # Add coordinate to walls list
+                maze.stamp()
+                walls.append((screen_x, screen_y))
 
-            elif character == " " or character == "e":  # Path or End
-                path.append((screen_x, screen_y))  # Add to path list
+            elif character == " " or character == "e":
+                path.append((screen_x, screen_y))
 
             if character == "e":  # End point
                 green.color("purple")
@@ -288,15 +279,13 @@ def setup_maze(grid):  # Define a function called setup_maze
                 green.stamp()
                 green.color("green")
                 global end_x, end_y
-                end_x, end_y = screen_x, screen_y  # Assign end location variables
+                end_x, end_y = screen_x, screen_y
 
-            if character == "s":  # Start point
+            if character == "s":
                 global start_x, start_y
                 start_x, start_y = screen_x, screen_y
                 red.goto(screen_x, screen_y)
                 red.stamp()
-
-    # Gọi hàm này sau khi tạo xong maze
 
 
 def end_program():
@@ -308,21 +297,21 @@ def bfs(x, y):
     frontier.append((x, y))
     solution[x, y] = x, y
 
-    while len(frontier) > 0:  # exit while loop when frontier queue equals zero
+    while len(frontier) > 0:
         time.sleep(0.1)
-        x, y = frontier.popleft()  # pop next entry in the frontier queue an assign to x and y location
+        x, y = frontier.popleft()
 
         if (end_x, end_y) in visited:
             break
-        if (x - 24, y) in path and (x - 24, y) not in visited:  # check the cell on the left
+        if (x - 24, y) in path and (x - 24, y) not in visited:
             cell = (x - 24, y)
-            solution[cell] = x, y  # backtracking routine [cell] is the previous cell. x, y is the current cell
-            blue.goto(cell)  # identify frontier cells
+            solution[cell] = x, y
+            blue.goto(cell)
             blue.stamp()
-            frontier.append(cell)  # add cell to frontier list
-            visited.add((x - 24, y))  # add cell to visited list
+            frontier.append(cell)
+            visited.add((x - 24, y))
 
-        if (x, y - 24) in path and (x, y - 24) not in visited:  # check the cell down
+        if (x, y - 24) in path and (x, y - 24) not in visited:
             cell = (x, y - 24)
             solution[cell] = x, y
             blue.goto(cell)
@@ -331,7 +320,7 @@ def bfs(x, y):
             visited.add((x, y - 24))
             # print(solution)
 
-        if (x + 24, y) in path and (x + 24, y) not in visited:  # check the cell on the  right
+        if (x + 24, y) in path and (x + 24, y) not in visited:
             cell = (x + 24, y)
             solution[cell] = x, y
             blue.goto(cell)
@@ -339,7 +328,7 @@ def bfs(x, y):
             frontier.append(cell)
             visited.add((x + 24, y))
 
-        if (x, y + 24) in path and (x, y + 24) not in visited:  # check the cell up
+        if (x, y + 24) in path and (x, y + 24) not in visited:
             cell = (x, y + 24)
             solution[cell] = x, y
             blue.goto(cell)
@@ -429,7 +418,7 @@ def aStar(x, y):
     open_set.add((x, y))
 
     while open_set:
-        time.sleep(0.2)
+        time.sleep(0.1)
         (a, b) = min(open_set, key=lambda node: f_score[node])
 
         if (a, b) == (end_x, end_y):
@@ -495,9 +484,9 @@ visited = set()
 frontier = deque()
 solution = {}
 
-# main program starts here
+# main program
 method_setup()
 setup_maze(input_grid)
 select_algorithm()
 back_route(end_x, end_y)
-wn.exitonclick()
+end_program()
