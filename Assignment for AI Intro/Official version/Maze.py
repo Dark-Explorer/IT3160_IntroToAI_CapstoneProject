@@ -193,9 +193,9 @@ wn.bgcolor("black")
 wn.title("Maze Solving Program")
 wn.setup(10, 10)
 
-# canvas = turtle.getcanvas()
-# root = canvas.winfo_toplevel()
-# root.protocol("WM_DELETE_WINDOW", on_close)
+canvas = turtle.getcanvas()
+root = canvas.winfo_toplevel()
+root.protocol("WM_DELETE_WINDOW", on_close)
 
 class Maze(turtle.Turtle):
     def __init__(self):
