@@ -48,8 +48,20 @@ def create_maze_with_GUI():
 
     while True:
         event, values = window.read()
-        if event == sg.WINDOW_CLOSED or event == 'Submit':
+        if event == sg.WINDOW_CLOSED:
             break
+
+        if event == 'Submit':
+            if int(values['-ROWS-']) <= 0 or int(values['-COLS-']) <= 0:
+                layout1 = [[sg.Text('Invalid size!')],
+                            [sg.Button('OK')]
+                            ]
+                window1 = sg.Window('Warning', layout1)
+                event1, values1 = window1.read()
+                if event1 == 'OK':
+                    window1.close()
+            else:
+                break
 
     window.close()
 
@@ -232,11 +244,6 @@ class Black(turtle.Turtle):
         self.penup()
         self.speed(0)
 
-# with open('grid.txt', 'r') as f:
-#     grid = []
-#     for line in f:
-#         row = line.strip()
-#         grid.append(row)
 
 def update_window_size(grid):
     base_cell_size = 24
@@ -289,7 +296,11 @@ def setup_maze(grid):
 
 
 def end_program():
-    wn.exitonclick()
+    print(1)
+    turtle.done()
+    # wn.exitonclick()
+    turtle.exitonclick()
+    print(2)
     sys.exit()
 
 
@@ -489,4 +500,6 @@ method_setup()
 setup_maze(input_grid)
 select_algorithm()
 back_route(end_x, end_y)
-end_program()
+# end_program()
+turtle.mainloop()
+turtle.onscreenclick(sys.exit())
