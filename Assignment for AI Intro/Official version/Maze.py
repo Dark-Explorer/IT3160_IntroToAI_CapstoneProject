@@ -302,14 +302,16 @@ def setup_maze(grid):
                 red.stamp()
 
 
-def end_program():
-    print(1)
-    turtle.done()
-    # wn.exitonclick()
-    turtle.exitonclick()
-    print(2)
+# def end_program():
+#     print(1)
+#     turtle.done()
+#     # wn.exitonclick()
+#     turtle.exitonclick()
+#     print(2)
+#     sys.exit()
+def end_program(x, y):
+    wn.bye()  
     sys.exit()
-
 
 def bfs(x, y):
     frontier.append((x, y))
@@ -507,6 +509,8 @@ method_setup()
 setup_maze(input_grid)
 select_algorithm()
 back_route(end_x, end_y)
-# end_program()
+
+wn.onclick(end_program)
+
+# Keep the window open
 turtle.mainloop()
-turtle.onscreenclick(sys.exit())
