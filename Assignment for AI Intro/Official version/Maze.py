@@ -9,7 +9,7 @@ global start_x, start_y, end_x, end_y
 
 # Set up the maze with PySimpleGUI
 def method_setup():
-    layout = [[sg.Text('Select how you want to create maze: ')],
+    layout = [[sg.Text('Select how you want to create the maze: ')],
               [sg.Button('Import File'), sg.Button('Use GUI')]
               ]
     window = sg.Window('Welcome', layout)
@@ -140,7 +140,7 @@ def create_maze_with_GUI():
             input_grid.append(tmp)
 
             if start_existed == 0:
-                layout1 = [[sg.Text('Start point not set!')],
+                layout1 = [[sg.Text('The start point hasn\'t been set!')],
                             [sg.Button('OK')]
                             ]
                 window1 = sg.Window('Warning', layout1)
@@ -149,7 +149,7 @@ def create_maze_with_GUI():
                     window1.close()
 
             if end_existed == 0:
-                layout1 = [[sg.Text('End point not set!')],
+                layout1 = [[sg.Text('The end point hasn\'t been set!')],
                             [sg.Button('OK')]
                             ]
                 window1 = sg.Window('Warning', layout1)
@@ -184,6 +184,15 @@ def select_algorithm():
             aStar(start_x, start_y)
 
 
+def unsolvable():
+    unreachable = [[sg.Text('No path can be found')]]
+    window = sg.Window('Warning', unreachable)
+    while True:
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED:
+            sys.exit()
+        window.close()
+
 # Maze by Turtle
 wn = turtle.Screen()
 wn.bgcolor("black")
@@ -217,7 +226,6 @@ class Blue(turtle.Turtle):
         self.speed(0)
 
 
-# this is the class for the yellow or turtle
 class Red(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -273,14 +281,14 @@ def setup_maze(grid):
 
             maze.goto(screen_x, screen_y)
 
-            if character == "+":  # Wall
+            if character == "+":
                 maze.stamp()
                 walls.append((screen_x, screen_y))
 
             elif character == " " or character == "e":
                 path.append((screen_x, screen_y))
 
-            if character == "e":  # End point
+            if character == "e":
                 green.color("purple")
                 green.goto(screen_x, screen_y)
                 green.stamp()
@@ -295,13 +303,6 @@ def setup_maze(grid):
                 red.stamp()
 
 
-# def end_program():
-#     print(1)
-#     turtle.done()
-#     # wn.exitonclick()
-#     turtle.exitonclick()
-#     print(2)
-#     sys.exit()
 def end_program(x, y):
     wn.bye()  
     sys.exit()
@@ -351,13 +352,7 @@ def bfs(x, y):
         green.goto(x, y)
         green.stamp()
     if (end_x, end_y) not in visited:
-        unreachable = [[sg.Text('No path can be found')]]
-        window2 = sg.Window('Warning', unreachable)
-        while True:
-            event2, values2 = window2.read()
-            if event2 == sg.WINDOW_CLOSED:
-                break
-            window2.close()
+        unsolvable()
 
 
 def dfs(x, y):
@@ -405,13 +400,7 @@ def dfs(x, y):
         green.goto(x, y)
         green.stamp()
     if (end_x, end_y) not in visited:
-        unreachable = [[sg.Text('No path can be found')]]
-        window2 = sg.Window('Warning', unreachable)
-        while True:
-            event2, values2 = window2.read()
-            if event2 == sg.WINDOW_CLOSED:
-                break
-            window2.close()
+        unsolvable()
 
 
 def heuristic(x, y):
@@ -464,13 +453,7 @@ def aStar(x, y):
         green.stamp()
 
     if (end_x, end_y) not in solution:
-        unreachable = [[sg.Text('No path can be found')]]
-        window2 = sg.Window('Warning', unreachable)
-        while True:
-            event2, values2 = window2.read()
-            if event2 == sg.WINDOW_CLOSED:
-                break
-        window2.close()
+        unsolvable()
 
 
 def back_route(x, y):
@@ -502,8 +485,5 @@ method_setup()
 setup_maze(input_grid)
 select_algorithm()
 back_route(end_x, end_y)
-
 wn.onclick(end_program)
-
-# Keep the window open
 turtle.mainloop()
