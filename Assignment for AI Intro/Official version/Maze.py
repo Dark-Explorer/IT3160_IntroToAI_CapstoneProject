@@ -183,16 +183,16 @@ def select_algorithm():
             window.close()
             aStar(start_x, start_y)
 
-def on_close():
-    print("Window closed!")
-    sys.exit()  # Terminate the program
+wn = turtle.Screen()
 
 # Maze by Turtle
-wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Maze Solving Program")
 wn.setup(10, 10)
 
+# Hàm đóng chương trình
+def on_close():
+    sys.exit()
 canvas = turtle.getcanvas()
 root = canvas.winfo_toplevel()
 root.protocol("WM_DELETE_WINDOW", on_close)
@@ -300,15 +300,6 @@ def setup_maze(grid):
                 start_x, start_y = screen_x, screen_y
                 red.goto(screen_x, screen_y)
                 red.stamp()
-
-
-def end_program():
-    print(1)
-    turtle.done()
-    # wn.exitonclick()
-    turtle.exitonclick()
-    print(2)
-    sys.exit()
 
 
 def bfs(x, y):
@@ -507,6 +498,5 @@ method_setup()
 setup_maze(input_grid)
 select_algorithm()
 back_route(end_x, end_y)
-# end_program()
 turtle.mainloop()
 turtle.onscreenclick(sys.exit())
