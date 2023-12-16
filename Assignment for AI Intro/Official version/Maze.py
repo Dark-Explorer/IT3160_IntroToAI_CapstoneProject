@@ -183,12 +183,19 @@ def select_algorithm():
             window.close()
             aStar(start_x, start_y)
 
+def on_close():
+    print("Window closed!")
+    sys.exit()  # Terminate the program
 
 # Maze by Turtle
 wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Maze Solving Program")
 wn.setup(10, 10)
+
+canvas = turtle.getcanvas()
+root = canvas.winfo_toplevel()
+root.protocol("WM_DELETE_WINDOW", on_close)
 
 class Maze(turtle.Turtle):
     def __init__(self):
