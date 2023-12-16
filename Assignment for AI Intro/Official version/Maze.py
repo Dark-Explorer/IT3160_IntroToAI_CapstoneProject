@@ -199,6 +199,13 @@ wn.bgcolor("black")
 wn.title("Maze Solving Program")
 wn.setup(10, 10)
 
+# Hàm đóng chương trình
+def on_close():
+    sys.exit()
+canvas = turtle.getcanvas()
+root = canvas.winfo_toplevel()
+root.protocol("WM_DELETE_WINDOW", on_close)
+
 class Maze(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -226,6 +233,7 @@ class Blue(turtle.Turtle):
         self.speed(0)
 
 
+# this is the class for the yellow or turtle
 class Red(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -485,5 +493,5 @@ method_setup()
 setup_maze(input_grid)
 select_algorithm()
 back_route(end_x, end_y)
-wn.onclick(end_program)
 turtle.mainloop()
+turtle.onscreenclick(sys.exit())
