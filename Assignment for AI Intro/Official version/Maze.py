@@ -139,6 +139,10 @@ def create_maze_with_GUI():
                 input_grid.append(row)
             input_grid.append(tmp)
 
+            # with open('file.txt', 'a') as file:
+            #     for string in input_grid:
+            #         file.write(string + '\n')
+
             if start_existed == 0:
                 layout1 = [[sg.Text('The start point hasn\'t been set!')],
                             [sg.Button('OK')]
@@ -265,6 +269,8 @@ def update_window_size(grid):
 
 
 def setup_maze(grid):
+    walls_count = 0
+    path_count = 0
     update_window_size(input_grid)
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
@@ -284,11 +290,14 @@ def setup_maze(grid):
             if character == "+":
                 maze.stamp()
                 walls.append((screen_x, screen_y))
+                walls_count += 1
 
-            elif character == " " or character == "e":
+            elif character == " ":
                 path.append((screen_x, screen_y))
+                path_count += 1
 
             if character == "e":
+                path.append((screen_x, screen_y))
                 green.color("purple")
                 green.goto(screen_x, screen_y)
                 green.stamp()
@@ -301,6 +310,12 @@ def setup_maze(grid):
                 start_x, start_y = screen_x, screen_y
                 red.goto(screen_x, screen_y)
                 red.stamp()
+    walls_count = walls_count - 2 * len(grid) - 2 * len(grid[0]) + 4
+    path_count += 2
+    info = (str) (walls_count) + " " + (str) (path_count) + " "
+    print("Wall: ", walls_count, " ", "Path: ", path_count)
+    with open("statistic.txt", 'a') as file:
+        file.write(info)
 
 
 def end_program(x, y):
@@ -351,6 +366,10 @@ def bfs(x, y):
             visited.add((x, y + 24))
         green.goto(x, y)
         green.stamp()
+
+    print("Visited: ", len(visited))
+    with open("statistic.txt", 'a') as file:
+        file.write((str)(len(visited)) + "\n")
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -399,6 +418,7 @@ def dfs(x, y):
             visited.add((x, y + 24))
         green.goto(x, y)
         green.stamp()
+    print("Visited: ", len(visited))
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -423,11 +443,11 @@ def aStar(x, y):
         time.sleep(0.1)
         (a, b) = min(open_set, key=lambda node: f_score[node])
 
-        if (a, b) == (end_x, end_y):
-            break
-
         open_set.remove((a, b))
         closed_set.add((a, b))
+
+        if (a, b) == (end_x, end_y):
+            break
 
         for (next_x, next_y) in [(a + 24, b), (a - 24, b), (a, b + 24), (a, b - 24)]:
             if (next_x, next_y) in path:
@@ -451,7 +471,7 @@ def aStar(x, y):
 
         green.goto(a, b)
         green.stamp()
-
+    print("Visited: ", len(closed_set))
     if (end_x, end_y) not in solution:
         unsolvable()
 
