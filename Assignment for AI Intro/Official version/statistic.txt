@@ -1,1 +1,1 @@
-(Wall - Path - Visited)
+(Wall - Path - Visited - Solution length)

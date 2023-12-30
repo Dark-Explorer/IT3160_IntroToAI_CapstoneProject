@@ -327,7 +327,7 @@ def bfs(x, y):
     solution[x, y] = x, y
 
     while len(frontier) > 0:
-        time.sleep(0.1)
+        time.sleep(0)
         x, y = frontier.popleft()
 
         if (end_x, end_y) in visited:
@@ -369,7 +369,7 @@ def bfs(x, y):
 
     print("Visited: ", len(visited))
     with open("statistic.txt", 'a') as file:
-        file.write((str)(len(visited)) + "\n")
+        file.write((str)(len(visited)) + " ")
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -379,7 +379,7 @@ def dfs(x, y):
     solution[x, y] = x, y
 
     while len(frontier) > 0:
-        time.sleep(0.1)
+        time.sleep(0)
         x, y = frontier.pop()
 
         if (end_x, end_y) in visited:
@@ -419,6 +419,8 @@ def dfs(x, y):
         green.goto(x, y)
         green.stamp()
     print("Visited: ", len(visited))
+    with open("statistic.txt", 'a') as file:
+        file.write((str)(len(visited)) + " ")
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -440,7 +442,7 @@ def aStar(x, y):
     open_set.add((x, y))
 
     while open_set:
-        time.sleep(0.1)
+        time.sleep(0)
         (a, b) = min(open_set, key=lambda node: f_score[node])
 
         open_set.remove((a, b))
@@ -472,6 +474,9 @@ def aStar(x, y):
         green.goto(a, b)
         green.stamp()
     print("Visited: ", len(closed_set))
+    print("Length of solution: ", len(solution))
+    with open("statistic.txt", 'a') as file:
+        file.write((str)(len(closed_set)) + " ")
     if (end_x, end_y) not in solution:
         unsolvable()
 
@@ -479,11 +484,15 @@ def aStar(x, y):
 def back_route(x, y):
     yellow.goto(x, y)
     yellow.stamp()
+    len = 1
     while (x, y) != (start_x, start_y):
+        len += 1
         yellow.goto(solution[x, y])
         yellow.stamp()
         x, y = solution[x, y]
-
+    print("Length of solution: " + (str)(len))
+    with open("statistic.txt", 'a') as file:
+        file.write((str)(len) + "\n")
 
 # set up classes
 maze = Maze()
