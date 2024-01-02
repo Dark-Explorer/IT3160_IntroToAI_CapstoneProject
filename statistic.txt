@@ -1,0 +1,7 @@
+Maze - Walls - Paths - Visited - Solution
+29 750 750  bfs 534376
+29 750 750  dfs 465376
+29 750 750 Maze - Walls - Paths - Visited - Solution
+29 750 750 bfs 534 376
+29 750 750 dfs 465 376
+29 750 750 

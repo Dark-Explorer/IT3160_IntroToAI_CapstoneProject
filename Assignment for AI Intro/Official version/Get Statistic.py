@@ -60,6 +60,7 @@ def clear_all():
     visited = set()
     frontier.clear()
     solution.clear()
+    wn.clear()
 
 # Maze by Turtle
 wn = turtle.Screen()
@@ -225,7 +226,7 @@ def bfs(x, y):
 
     print("Visited: ", len(visited))
     with open("statistic.txt", 'a') as file:
-        file.write((str)(" bfs ") + (str)(len(visited)))
+        file.write((str)("bfs ") + (str)(len(visited)))
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -273,7 +274,7 @@ def dfs(x, y):
         green.stamp()
     print("Visited: ", len(visited))
     with open("statistic.txt", 'a') as file:
-        file.write((str)(" dfs ") + (str)(len(visited)))
+        file.write((str)("dfs ") + (str)(len(visited)))
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -326,7 +327,7 @@ def aStar(x, y):
     print("Visited: ", len(closed_set))
     # print("Length of solution: ", len(solution))
     with open("statistic.txt", 'a') as file:
-        file.write((str)(" astar ") + (str)(len(closed_set)))
+        file.write((str)("astar ") + (str)(len(closed_set)))
     if (end_x, end_y) not in solution:
         unsolvable()
 
@@ -343,7 +344,7 @@ def back_route(x, y):
         x, y = solution[x, y]
     print("Length of solution: " + (str)(len))
     with open("statistic.txt", 'a') as file:
-        file.write((str)(len) + "\n")
+        file.write(" " + (str)(len) + "\n")
 
 # set up classes
 maze = Maze()
