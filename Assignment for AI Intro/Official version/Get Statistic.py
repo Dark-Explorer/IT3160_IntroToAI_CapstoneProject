@@ -60,80 +60,79 @@ def clear_all():
     visited = set()
     frontier.clear()
     solution.clear()
-    wn.clear()
 
-# Maze by Turtle
-wn = turtle.Screen()
-wn.bgcolor("black")
-wn.title("Maze Solving Program")
-wn.setup(10, 10)
+# # Maze by Turtle
+# wn = turtle.Screen()
+# wn.bgcolor("black")
+# wn.title("Maze Solving Program")
+# wn.setup(10, 10)
 
-class Maze(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("white")
-        self.penup()
-        self.speed(0)
-
-
-class Green(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("green")
-        self.penup()
-        self.speed(0)
+# class Maze(turtle.Turtle):
+    # def __init__(self):
+    #     turtle.Turtle.__init__(self)
+    #     self.shape("square")
+    #     self.color("white")
+    #     self.penup()
+    #     self.speed(0)
 
 
-class Blue(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("blue")
-        self.penup()
-        self.speed(0)
+# class Green(turtle.Turtle):
+    # def __init__(self):
+    #     turtle.Turtle.__init__(self)
+    #     self.shape("square")
+    #     self.color("green")
+    #     self.penup()
+    #     self.speed(0)
 
 
-class Red(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("red")
-        self.penup()
-        self.speed(0)
+# class Blue(turtle.Turtle):
+    # def __init__(self):
+    #     turtle.Turtle.__init__(self)
+    #     self.shape("square")
+    #     self.color("blue")
+    #     self.penup()
+    #     self.speed(0)
 
-class Yellow(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("yellow")
-        self.penup()
-        self.speed(0)
 
-class Black(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("black")
-        self.penup()
-        self.speed(0)
+# class Red(turtle.Turtle):
+    # def __init__(self):
+    #     turtle.Turtle.__init__(self)
+    #     self.shape("square")
+    #     self.color("red")
+    #     self.penup()
+    #     self.speed(0)
 
-def update_window_size(grid):
-    base_cell_size = 24
-    num_rows = len(grid)
-    num_cols = len(grid[0])
+# class Yellow(turtle.Turtle):
+    # def __init__(self):
+    #     turtle.Turtle.__init__(self)
+    #     self.shape("square")
+    #     self.color("yellow")
+    #     self.penup()
+    #     self.speed(0)
 
-    window_width = num_cols * base_cell_size
-    window_height = num_rows * base_cell_size
+# class Black(turtle.Turtle):
+    # def __init__(self):
+    #     turtle.Turtle.__init__(self)
+    #     self.shape("square")
+    #     self.color("black")
+    #     self.penup()
+    #     self.speed(0)
 
-    wn.setup(width=window_width + 50, height=window_height + 50)
+# def update_window_size(grid):
+    # base_cell_size = 24
+    # num_rows = len(grid)
+    # num_cols = len(grid[0])
+
+    # window_width = num_cols * base_cell_size
+    # window_height = num_rows * base_cell_size
+
+    # wn.setup(width=window_width + 50, height=window_height + 50)
 
 def setup_maze(grid):
     global walls_count, path_count
     walls_count = 0
     path_count = 0
-    update_window_size(grid)
+    # update_window_size(grid)
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
 
@@ -147,10 +146,10 @@ def setup_maze(grid):
             screen_x = (x * 24) + screen_x_start
             screen_y = screen_y_start - (y * 24)
 
-            maze.goto(screen_x, screen_y)
+            # maze.goto(screen_x, screen_y)
 
             if character == "+":
-                maze.stamp()
+                # maze.stamp()
                 walls.append((screen_x, screen_y))
                 walls_count += 1
 
@@ -160,25 +159,23 @@ def setup_maze(grid):
 
             if character == "e":
                 path.append((screen_x, screen_y))
-                green.color("purple")
-                green.goto(screen_x, screen_y)
-                green.stamp()
-                green.color("green")
+                # green.color("purple")
+                # green.goto(screen_x, screen_y)
+                # green.stamp()
+                # green.color("green")
                 global end_x, end_y
                 end_x, end_y = screen_x, screen_y
 
             if character == "s":
                 global start_x, start_y
                 start_x, start_y = screen_x, screen_y
-                red.goto(screen_x, screen_y)
-                red.stamp()
+                # red.goto(screen_x, screen_y)
+                # red.stamp()
     walls_count = walls_count - 2 * len(grid) - 2 * len(grid[0]) + 4
     path_count += 2
-    with open("statistic.txt", 'a') as file:
-        file.write("Maze - Walls - Paths - Visited - Solution" + "\n")
 
 def end_program(x, y):
-    wn.bye()  
+    # wn.bye()  
     sys.exit()
 
 def bfs(x, y):
@@ -193,36 +190,36 @@ def bfs(x, y):
         if (x - 24, y) in path and (x - 24, y) not in visited:
             cell = (x - 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x - 24, y))
 
         if (x, y - 24) in path and (x, y - 24) not in visited:
             cell = (x, y - 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y - 24))
 
         if (x + 24, y) in path and (x + 24, y) not in visited:
             cell = (x + 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x + 24, y))
 
         if (x, y + 24) in path and (x, y + 24) not in visited:
             cell = (x, y + 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y + 24))
-        green.goto(x, y)
-        green.stamp()
+        # green.goto(x, y)
+        # green.stamp()
 
     print("Visited: ", len(visited))
     with open("statistic.txt", 'a') as file:
@@ -242,36 +239,36 @@ def dfs(x, y):
         if (x - 24, y) in path and (x - 24, y) not in visited:
             cell = (x - 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x - 24, y))
 
         if (x, y - 24) in path and (x, y - 24) not in visited:
             cell = (x, y - 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y - 24))
 
         if (x + 24, y) in path and (x + 24, y) not in visited:
             cell = (x + 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x + 24, y))
 
         if (x, y + 24) in path and (x, y + 24) not in visited:
             cell = (x, y + 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y + 24))
-        green.goto(x, y)
-        green.stamp()
+        # green.goto(x, y)
+        # green.stamp()
     print("Visited: ", len(visited))
     with open("statistic.txt", 'a') as file:
         file.write((str)("dfs ") + (str)(len(visited)))
@@ -319,11 +316,11 @@ def aStar(x, y):
 
                     if (next_x, next_y) not in open_set:
                         open_set.add((next_x, next_y))
-                    blue.goto((next_x, next_y))
-                    blue.stamp()
+                    # blue.goto((next_x, next_y))
+                    # blue.stamp()
 
-        green.goto(a, b)
-        green.stamp()
+        # green.goto(a, b)
+        # green.stamp()
     print("Visited: ", len(closed_set))
     # print("Length of solution: ", len(solution))
     with open("statistic.txt", 'a') as file:
@@ -334,25 +331,25 @@ def aStar(x, y):
 
 def back_route(x, y):
     global solution
-    yellow.goto(x, y)
-    yellow.stamp()
+    # yellow.goto(x, y)
+    # yellow.stamp()
     len = 1
     while (x, y) != (start_x, start_y):
         len += 1
-        yellow.goto(solution[x, y])
-        yellow.stamp()
+        # yellow.goto(solution[x, y])
+        # yellow.stamp()
         x, y = solution[x, y]
     print("Length of solution: " + (str)(len))
     with open("statistic.txt", 'a') as file:
         file.write(" " + (str)(len) + "\n")
 
 # set up classes
-maze = Maze()
-red = Red()
-blue = Blue()
-green = Green()
-yellow = Yellow()
-black = Black()
+# maze = Maze()
+# red = Red()
+# blue = Blue()
+# green = Green()
+# yellow = Yellow()
+# black = Black()
 
 # setup lists
 walls = []
@@ -362,7 +359,9 @@ frontier = deque()
 solution = {}
 
 # main program
+with open("statistic.txt", 'a') as file:
+    file.write("Maze - Walls - Paths - Visited - Solution" + "\n")
 folderpath = os.path.join(os.getcwd(), 'Assignment for AI Intro/Official version/MazeForStatistics')
 handle_folder(folderpath)
-wn.onclick(end_program)
+# wn.onclick(end_program)
 turtle.mainloop()
