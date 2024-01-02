@@ -58,7 +58,7 @@ def generate_maze(width, height):
     return maze_str
 
 for i in range (1, 91):
-    filename = f'maze_{i}'
+    filename = f'{i}'
     folderpath = os.path.join(os.getcwd(), 'Assignment for AI Intro/Official version/MazeForStatistics')
     filepath = os.path.join(folderpath, filename)
     with open(filepath, 'w') as file:
