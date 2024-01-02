@@ -267,4 +267,5 @@ Maze - Walls - Paths - Visited - Solution
 24 750 750 dfs 1403 730
 24 750 750 astar 54 54
 30 750 750 bfs 230 13
-30 750 750 
+30 750 750 dfs 1198 609
+30 750 750 astar 13 13
