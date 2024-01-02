@@ -1,51 +1,40 @@
 import random
 
 def generate_maze(width, height):
-    # Increase the maze dimensions to account for borders
-    width_with_border = width + 2
-    height_with_border = height + 2
+    maze = [['+'] * (width + 2)]
+    for i in range(height):
+        row = ['+']
+        for j in range(width):
+            if random.random() < 0.7:
+                row.append('+')
+            else:
+                row.append(' ')
+        row.append('+')
+        maze.append(row)
+    maze.append(['+'] * (width + 2))
+    maze[1][1] = 's'
+    maze[-2][-2] = 'e'
 
-    # Initialize the maze grid with walls
-    maze = [['+' for _ in range(width_with_border)] for _ in range(height_with_border)]
-
-    # Set the starting position
-    start_x = random.randint(1, width)
-    start_y = random.randint(1, height)
-    maze[start_y][start_x] = ' '
-
-    # Generate the maze using depth-first search with larger moves
-    stack = [(start_x, start_y)]
+    visited = set()
+    stack = [(1, 1)]
     while stack:
-        x, y = stack.pop()
+        (x, y) = stack.pop()
+        if (x, y) == (width - 1, height - 2):
+            break
+        if (x, y) in visited:
+            continue
+        visited.add((x, y))
 
-        directions = [(x + 2, y), (x - 2, y), (x, y + 2), (x, y - 2)]
-        random.shuffle(directions)
+        neighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+        random.shuffle(neighbors)
+        for (nx, ny) in neighbors:
+            if maze[ny][nx] == ' ':
+                stack.append((nx, ny))
+                maze[ny][nx] = '+'
 
-        for dx, dy in directions:
-            if dx >= 1 and dx < width_with_border - 1 and dy >= 1 and dy < height_with_border - 1 and maze[dy][dx] == '+':
-                maze[y + (dy - y) // 2][x + (dx - x) // 2] = ' '
-                maze[dy][dx] = ' '
-                stack.append((dx, dy))
+    return maze
 
-    # Set the goal position
-    goal_x = random.randint(1, width)
-    goal_y = random.randint(1, height)
-    maze[goal_y][goal_x] = 'e'
-
-    goal_x = random.randint(1, width)
-    goal_y = random.randint(1, height)
-    maze[goal_y][goal_x] = 's'
-
-    # Convert the maze grid to a string representation
-    maze_str = '\n'.join(''.join(row) for row in maze)
-
-    return maze_str
-
-
-# Example usage
-width = 50
-height = 30
+width, height = 20, 10
 maze = generate_maze(width, height)
-print(maze)
-with open("34.txt", 'w') as file:
-    file.write(maze)
+for row in maze:
+    print(''.join(str(cell) for cell in row))

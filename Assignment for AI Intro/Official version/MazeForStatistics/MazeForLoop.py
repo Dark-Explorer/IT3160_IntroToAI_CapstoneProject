@@ -7,187 +7,6 @@ import PySimpleGUI as sg
 global input_grid
 global start_x, start_y, end_x, end_y
 
-# Set up the maze with PySimpleGUI
-def method_setup():
-    layout = [[sg.Text('Select how you want to create the maze: ')],
-              [sg.Button('Import File'), sg.Button('Use GUI')]
-              ]
-    window = sg.Window('Welcome', layout)
-    while True:
-        event, values = window.read()
-        if event == sg.WINDOW_CLOSED:
-            break
-        if event == 'Use GUI':
-            window.close()
-            create_maze_with_GUI()
-        elif event == 'Import File':
-            import_layout = [[sg.Text('Choose file to import:')],
-                             [sg.Input(), sg.FileBrowse()],
-                             [sg.OK()]
-                             ]
-            window1 = sg.Window('Import File', import_layout)
-            event1, values1 = window1.read()
-            if event1 == 'OK':
-                global input_grid
-                filename = values1[0]
-                with open(filename, 'r') as f:
-                    input_grid = []
-                    for line in f:
-                        row = line.strip()
-                        input_grid.append(row)
-            window1.close()
-            window.close()
-
-
-def create_maze_with_GUI():
-    layout = [[sg.Text('Number of rows:'), sg.Input(size=(5, 1), key='-ROWS-')],
-              [sg.Text('Number of columns:'), sg.Input(size=(5, 1), key='-COLS-')],
-              [sg.Button('Submit')]]
-
-    window = sg.Window('Maze Setup', layout)
-
-    while True:
-        event, values = window.read()
-        if event == sg.WINDOW_CLOSED:
-            break
-
-        if event == 'Submit':
-            if int(values['-ROWS-']) <= 0 or int(values['-COLS-']) <= 0:
-                layout1 = [[sg.Text('Invalid size!')],
-                            [sg.Button('OK')]
-                            ]
-                window1 = sg.Window('Warning', layout1)
-                event1, values1 = window1.read()
-                if event1 == 'OK':
-                    window1.close()
-            else:
-                break
-
-    window.close()
-
-    m = int(values['-ROWS-'])
-    n = int(values['-COLS-'])
-
-    layout = [[sg.Button('', size=(2, 1), key=(i, j), pad=(0, 0), button_color=('white', 'white')) for j in range(n)] for i in range(m)]
-    layout.append([sg.Button('Set Start'), sg.Button('Set End'), sg.Button('Set Wall')])
-    layout.append([sg.Button('Submit')])
-
-    window = sg.Window('Maze Setup', layout)
-
-    start_set = False
-    end_set = False
-    wall_set = True
-    start = end = None
-
-    start_existed = 0
-    end_existed = 0
-
-    while True:
-        event, values = window.read()
-        if event == sg.WINDOW_CLOSED:
-            break
-
-        if type(event) == tuple:
-            button = window[event]
-            if wall_set:
-                if button.ButtonColor[1] == 'white':
-                    button.update(button_color=('white', 'black'))
-                elif button.ButtonColor[1] == 'black':
-                    button.update(button_color=('white', 'white'))
-            elif start_set:
-                if start:
-                    start.update(button_color=('white', 'white'))
-                button.update(button_color=('white', 'red'))
-                start = button
-            elif end_set:
-                if end:
-                    end.update(button_color=('white', 'white'))
-                button.update(button_color=('white', 'purple'))
-                end = button
-        elif event == 'Set Start':
-            start_set = True
-            end_set = False
-            wall_set = False
-        elif event == 'Set End':
-            end_set = True
-            start_set = False
-            wall_set = False
-        elif event == 'Set Wall':
-            wall_set = True
-            start_set = False
-            end_set = False
-        elif event == 'Submit':
-            global input_grid
-            input_grid = []
-            tmp = "+" * (n + 2)
-            input_grid.append(tmp)
-            for i in range(m):
-                row = '+'
-                for j in range(n):
-                    button = window[(i, j)]
-                    if button.ButtonColor[1] == 'black':
-                        row += '+'
-                    elif button.ButtonColor[1] == 'white':
-                        row += ' '
-                    elif button.ButtonColor[1] == 'red':
-                        row += 's'
-                        start_existed = 1
-                    elif button.ButtonColor[1] == 'purple':
-                        row += 'e'
-                        end_existed = 1
-                row += '+'
-                input_grid.append(row)
-            input_grid.append(tmp)
-
-            # with open('file.txt', 'a') as file:
-            #     for string in input_grid:
-            #         file.write(string + '\n')
-
-            if start_existed == 0:
-                layout1 = [[sg.Text('The start point hasn\'t been set!')],
-                            [sg.Button('OK')]
-                            ]
-                window1 = sg.Window('Warning', layout1)
-                event1, values1 = window1.read()
-                if event1 == 'OK':
-                    window1.close()
-
-            if end_existed == 0:
-                layout1 = [[sg.Text('The end point hasn\'t been set!')],
-                            [sg.Button('OK')]
-                            ]
-                window1 = sg.Window('Warning', layout1)
-                event1, values1 = window1.read()
-                if event1 == 'OK':
-                    window1.close()
-            if start_existed == 1 and end_existed == 1:
-                break
-
-    window.close()
-
-
-def select_algorithm():
-    layout = [[sg.Text('Choose the algorithm you want to solve this maze with:')],
-              [sg.Button('BFS'), sg.Button('DFS'), sg.Button('A*')]
-              ]
-
-    window = sg.Window('Select Algorithm', layout)
-
-    while True:
-        event, values = window.read()
-        if event == sg.WINDOW_CLOSED:
-            break
-        if event == 'BFS':
-            window.close()
-            bfs(start_x, start_y)
-        elif event == 'DFS':
-            window.close()
-            dfs(start_x, start_y)
-        elif event == 'A*':
-            window.close()
-            aStar(start_x, start_y)
-
-
 def unsolvable():
     unreachable = [[sg.Text('No path can be found')]]
     window = sg.Window('Warning', unreachable)
@@ -197,11 +16,6 @@ def unsolvable():
             sys.exit()
         window.close()
 
-# Maze by Turtle
-wn = turtle.Screen()
-wn.bgcolor("black")
-wn.title("Maze Solving Program")
-wn.setup(10, 10)
 
 class Maze(turtle.Turtle):
     def __init__(self):
@@ -314,12 +128,12 @@ def setup_maze(grid):
     path_count += 2
     info = (str) (walls_count) + " " + (str) (path_count) + " "
     print("Wall: ", walls_count, " ", "Path: ", path_count)
-    # with open("statistic.txt", 'a') as file:
-    #     file.write(info)
+    with open("MultiRoutesStatistic.txt", 'a') as file:
+        file.write(info)
 
 
 def end_program(x, y):
-    wn.bye()  
+    wn.bye()
     sys.exit()
 
 def bfs(x, y):
@@ -367,9 +181,9 @@ def bfs(x, y):
         green.goto(x, y)
         green.stamp()
 
-    print("Visited: ", len(visited) + 1)
-    # with open("statistic.txt", 'a') as file:
-    #     file.write((str)(len(visited) + 1) + " B ")
+    print("Visited: ", len(visited))
+    with open("MultiRoutesStatistic.txt", 'a') as file:
+        file.write((str)(len(visited)) + " B ")
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -418,9 +232,9 @@ def dfs(x, y):
             visited.add((x, y + 24))
         green.goto(x, y)
         green.stamp()
-    print("Visited: ", len(visited) + 1)
-    # with open("statistic.txt", 'a') as file:
-    #     file.write((str)(len(visited) + 1) + " D ")
+    print("Visited: ", len(visited))
+    with open("MultiRoutesStatistic.txt", 'a') as file:
+        file.write((str)(len(visited)) + " D ")
     if (end_x, end_y) not in visited:
         unsolvable()
 
@@ -474,8 +288,8 @@ def aStar(x, y):
         green.goto(a, b)
         green.stamp()
     print("Visited: ", len(solution))
-    # with open("statistic.txt", 'a') as file:
-    #     file.write((str)(len(solution)) + " A ")
+    with open("MultiRoutesStatistic.txt", 'a') as file:
+        file.write((str)(len(solution)) + " A ")
     if (end_x, end_y) not in solution:
         unsolvable()
 
@@ -490,8 +304,8 @@ def back_route(x, y):
         yellow.stamp()
         x, y = solution[x, y]
     print("Length of solution: " + (str)(len))
-    # with open("statistic.txt", 'a') as file:
-    #     file.write((str)(len) + "\n")
+    with open("MultiRoutesStatistic.txt", 'a') as file:
+        file.write((str)(len) + "\n")
 
 # set up classes
 maze = Maze()
@@ -509,9 +323,26 @@ frontier = deque()
 solution = {}
 
 # main program
-method_setup()
-setup_maze(input_grid)
-select_algorithm()
-back_route(end_x, end_y)
-wn.onclick(end_program)
-turtle.mainloop()
+
+wn = turtle.Screen()
+for i in range(1,101):
+    wn.bgcolor("black")
+    wn.title("Maze Solving Program")
+    wn.setup(10, 10)
+    filename = f"{i}.txt"
+    with open(filename, 'r') as f:
+        input_grid = []
+        for line in f:
+            row = line.strip()
+            input_grid.append(row)
+    setup_maze(input_grid)
+    # bfs(start_x, start_y)
+    # dfs(start_x, start_y)
+    aStar(start_x, start_y)
+    back_route(end_x, end_y)
+    wn.clearscreen()
+    walls = []
+    path = []
+    visited = set()
+    frontier = deque()
+    solution = {}

@@ -1,5 +1,6 @@
 import random
 
+
 def generate_maze(width, height):
     # Increase the maze dimensions to account for borders
     width_with_border = width + 2
@@ -24,7 +25,8 @@ def generate_maze(width, height):
 
         path_available = False
         for dx, dy in directions:
-            if dx >= 1 and dx < width_with_border - 1 and dy >= 1 and dy < height_with_border - 1 and maze[dy][dx] == '+':
+            if dx >= 1 and dx < width_with_border - 1 and dy >= 1 and dy < height_with_border - 1 and maze[dy][
+                dx] == '+':
                 maze[y + (dy - y) // 2][x + (dx - x) // 2] = ' '
                 maze[dy][dx] = ' '
                 stack.append((dx, dy))
@@ -51,10 +53,15 @@ def generate_maze(width, height):
     # Ensure there is a path from start to goal
     maze_str = maze_str.replace('s', ' ')
     maze_str = maze_str.replace('e', ' ')
-    maze_str = maze_str[:start_y * (width_with_border + 1) + start_x] + 's' + maze_str[start_y * (width_with_border + 1) + start_x + 1:]
-    maze_str = maze_str[:goal_y * (width_with_border + 1) + goal_x] + 'e' + maze_str[goal_y * (width_with_border + 1) + goal_x + 1:]
+    maze_str = maze_str[:start_y * (width_with_border + 1) + start_x] + 's' + maze_str[start_y * (
+                width_with_border + 1) + start_x + 1:]
+    maze_str = maze_str[:goal_y * (width_with_border + 1) + goal_x] + 'e' + maze_str[goal_y * (
+                width_with_border + 1) + goal_x + 1:]
 
     return maze_str
 
-with open("35.txt", 'w') as file:
-    file.write(generate_maze(50,30))
+
+for i in range(1, 101):
+    filename = str(i) + ".txt"
+    with open(filename, 'w') as file:
+        file.write(generate_maze(50, 30))
