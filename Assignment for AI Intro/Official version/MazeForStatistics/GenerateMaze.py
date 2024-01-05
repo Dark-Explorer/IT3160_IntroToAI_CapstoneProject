@@ -2,14 +2,12 @@ import random
 
 
 def generate_maze(width, height):
-    # Increase the maze dimensions to account for borders
     width_with_border = width + 2
     height_with_border = height + 2
 
     # Initialize the maze grid with walls
     maze = [['+' for _ in range(width_with_border)] for _ in range(height_with_border)]
 
-    # Set the starting position
     start_x = random.randint(1, width)
     start_y = random.randint(1, height)
     maze[start_y][start_x] = 's'

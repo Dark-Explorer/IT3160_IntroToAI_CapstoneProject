@@ -1,6 +1,7 @@
-import turtle
+# import turtle
 import time
 import sys
+import math
 from collections import deque
 import PySimpleGUI as sg
 
@@ -17,75 +18,75 @@ def unsolvable():
         window.close()
 
 
-class Maze(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("white")
-        self.penup()
-        self.speed(0)
-
-
-class Green(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("green")
-        self.penup()
-        self.speed(0)
-
-
-class Blue(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("blue")
-        self.penup()
-        self.speed(0)
-
-
-class Red(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("red")
-        self.penup()
-        self.speed(0)
-
-
-class Yellow(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("yellow")
-        self.penup()
-        self.speed(0)
-
-
-class Black(turtle.Turtle):
-    def __init__(self):
-        turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("black")
-        self.penup()
-        self.speed(0)
-
-
-def update_window_size(grid):
-    base_cell_size = 24
-    num_rows = len(grid)
-    num_cols = len(grid[0])
-
-    window_width = num_cols * base_cell_size
-    window_height = num_rows * base_cell_size
-
-    wn.setup(width=window_width + 50, height=window_height + 50)
+# class Maze(turtle.Turtle):
+#     def __init__(self):
+#         turtle.Turtle.__init__(self)
+#         self.shape("square")
+#         self.color("white")
+#         self.penup()
+#         self.speed(0)
+#
+#
+# class Green(turtle.Turtle):
+#     def __init__(self):
+#         turtle.Turtle.__init__(self)
+#         self.shape("square")
+#         self.color("green")
+#         self.penup()
+#         self.speed(0)
+#
+#
+# class Blue(turtle.Turtle):
+#     def __init__(self):
+#         turtle.Turtle.__init__(self)
+#         self.shape("square")
+#         self.color("blue")
+#         self.penup()
+#         self.speed(0)
+#
+#
+# class Red(turtle.Turtle):
+#     def __init__(self):
+#         turtle.Turtle.__init__(self)
+#         self.shape("square")
+#         self.color("red")
+#         self.penup()
+#         self.speed(0)
+#
+#
+# class Yellow(turtle.Turtle):
+#     def __init__(self):
+#         turtle.Turtle.__init__(self)
+#         self.shape("square")
+#         self.color("yellow")
+#         self.penup()
+#         self.speed(0)
+#
+#
+# class Black(turtle.Turtle):
+#     def __init__(self):
+#         turtle.Turtle.__init__(self)
+#         self.shape("square")
+#         self.color("black")
+#         self.penup()
+#         self.speed(0)
+#
+#
+# def update_window_size(grid):
+#     base_cell_size = 24
+#     num_rows = len(grid)
+#     num_cols = len(grid[0])
+#
+#     window_width = num_cols * base_cell_size
+#     window_height = num_rows * base_cell_size
+#
+#     wn.setup(width=window_width + 50, height=window_height + 50)
 
 
 def setup_maze(grid):
     walls_count = 0
     path_count = 0
-    update_window_size(input_grid)
+    # update_window_size(input_grid)
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
 
@@ -99,10 +100,10 @@ def setup_maze(grid):
             screen_x = (x * 24) + screen_x_start
             screen_y = screen_y_start - (y * 24)
 
-            maze.goto(screen_x, screen_y)
+            # maze.goto(screen_x, screen_y)
 
             if character == "+":
-                maze.stamp()
+                # maze.stamp()
                 walls.append((screen_x, screen_y))
                 walls_count += 1
 
@@ -112,18 +113,18 @@ def setup_maze(grid):
 
             if character == "e":
                 path.append((screen_x, screen_y))
-                green.color("purple")
-                green.goto(screen_x, screen_y)
-                green.stamp()
-                green.color("green")
+                # green.color("purple")
+                # green.goto(screen_x, screen_y)
+                # green.stamp()
+                # green.color("green")
                 global end_x, end_y
                 end_x, end_y = screen_x, screen_y
 
             if character == "s":
                 global start_x, start_y
                 start_x, start_y = screen_x, screen_y
-                red.goto(screen_x, screen_y)
-                red.stamp()
+                # red.goto(screen_x, screen_y)
+                # red.stamp()
     walls_count = walls_count - 2 * len(grid) - 2 * len(grid[0]) + 4
     path_count += 2
     info = (str) (walls_count) + " " + (str) (path_count) + " "
@@ -133,7 +134,7 @@ def setup_maze(grid):
 
 
 def end_program(x, y):
-    wn.bye()
+    # wn.bye()
     sys.exit()
 
 def bfs(x, y):
@@ -149,16 +150,16 @@ def bfs(x, y):
         if (x - 24, y) in path and (x - 24, y) not in visited:
             cell = (x - 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x - 24, y))
 
         if (x, y - 24) in path and (x, y - 24) not in visited:
             cell = (x, y - 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y - 24))
             # print(solution)
@@ -166,20 +167,20 @@ def bfs(x, y):
         if (x + 24, y) in path and (x + 24, y) not in visited:
             cell = (x + 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x + 24, y))
 
         if (x, y + 24) in path and (x, y + 24) not in visited:
             cell = (x, y + 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y + 24))
-        green.goto(x, y)
-        green.stamp()
+        # green.goto(x, y)
+        # green.stamp()
 
     print("Visited: ", len(visited))
     with open("MultiRoutesStatistic.txt", 'a') as file:
@@ -201,16 +202,16 @@ def dfs(x, y):
         if (x - 24, y) in path and (x - 24, y) not in visited:
             cell = (x - 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x - 24, y))
 
         if (x, y - 24) in path and (x, y - 24) not in visited:
             cell = (x, y - 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y - 24))
             # print(solution)
@@ -218,20 +219,20 @@ def dfs(x, y):
         if (x + 24, y) in path and (x + 24, y) not in visited:
             cell = (x + 24, y)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x + 24, y))
 
         if (x, y + 24) in path and (x, y + 24) not in visited:
             cell = (x, y + 24)
             solution[cell] = x, y
-            blue.goto(cell)
-            blue.stamp()
+            # blue.goto(cell)
+            # blue.stamp()
             frontier.append(cell)
             visited.add((x, y + 24))
-        green.goto(x, y)
-        green.stamp()
+        # green.goto(x, y)
+        # green.stamp()
     print("Visited: ", len(visited))
     with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write((str)(len(visited)) + " D ")
@@ -240,7 +241,7 @@ def dfs(x, y):
 
 
 def heuristic(x, y):
-    return abs(x - end_x) * abs(x - end_x) + abs(y - end_y) * abs(y - end_y)
+    return sqrt(abs(x - end_x) * abs(x - end_x) + abs(y - end_y) * abs(y - end_y))
 
 
 def aStar(x, y):
@@ -282,11 +283,11 @@ def aStar(x, y):
 
                     if (next_x, next_y) not in open_set:
                         open_set.add((next_x, next_y))
-                    blue.goto((next_x, next_y))
-                    blue.stamp()
+                    # blue.goto((next_x, next_y))
+                    # blue.stamp()
 
-        green.goto(a, b)
-        green.stamp()
+        # green.goto(a, b)
+        # green.stamp()
     print("Visited: ", len(solution))
     with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write((str)(len(solution)) + " A ")
@@ -295,25 +296,25 @@ def aStar(x, y):
 
 
 def back_route(x, y):
-    yellow.goto(x, y)
-    yellow.stamp()
+    # yellow.goto(x, y)
+    # yellow.stamp()
     len = 1
     while (x, y) != (start_x, start_y):
         len += 1
-        yellow.goto(solution[x, y])
-        yellow.stamp()
+        # yellow.goto(solution[x, y])
+        # yellow.stamp()
         x, y = solution[x, y]
     print("Length of solution: " + (str)(len))
     with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write((str)(len) + "\n")
 
 # set up classes
-maze = Maze()
-red = Red()
-blue = Blue()
-green = Green()
-yellow = Yellow()
-black = Black()
+# maze = Maze()
+# red = Red()
+# blue = Blue()
+# green = Green()
+# yellow = Yellow()
+# black = Black()
 
 # setup lists
 walls = []
@@ -324,11 +325,11 @@ solution = {}
 
 # main program
 
-wn = turtle.Screen()
+# wn = turtle.Screen()
 for i in range(1,101):
-    wn.bgcolor("black")
-    wn.title("Maze Solving Program")
-    wn.setup(10, 10)
+    # wn.bgcolor("black")
+    # wn.title("Maze Solving Program")
+    # wn.setup(10, 10)
     filename = f"{i}.txt"
     with open(filename, 'r') as f:
         input_grid = []
@@ -336,11 +337,11 @@ for i in range(1,101):
             row = line.strip()
             input_grid.append(row)
     setup_maze(input_grid)
-    # bfs(start_x, start_y)
+    bfs(start_x, start_y)
     # dfs(start_x, start_y)
-    aStar(start_x, start_y)
+    # aStar(start_x, start_y)
     back_route(end_x, end_y)
-    wn.clearscreen()
+    # wn.clearscreen()
     walls = []
     path = []
     visited = set()
