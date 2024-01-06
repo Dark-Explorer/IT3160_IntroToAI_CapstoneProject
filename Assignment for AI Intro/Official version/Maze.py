@@ -433,7 +433,6 @@ def heuristic(x, y):
 def aStar(x, y):
     open_set = set()
     closed_set = set()
-    came_from = {}
 
     g_score = {(x, y): 0}
     h_score = {(x, y): heuristic(x, y)}
@@ -443,7 +442,6 @@ def aStar(x, y):
     open_set.add((x, y))
 
     while open_set:
-        # time.sleep(0)
         (a, b) = min(open_set, key=lambda node: f_score[node])
 
         open_set.remove((a, b))
@@ -460,18 +458,15 @@ def aStar(x, y):
                 tentative_g_score = g_score[(a, b)] + 24
 
                 if (next_x, next_y) not in open_set or tentative_g_score < g_score[(next_x, next_y)]:
-                    came_from[(next_x, next_y)] = (a, b)
                     g_score[(next_x, next_y)] = tentative_g_score
                     h_score[(next_x, next_y)] = heuristic(next_x, next_y)
                     f_score[(next_x, next_y)] = g_score[(next_x, next_y)] + h_score[(next_x, next_y)]
-
                     solution[(next_x, next_y)] = a, b
 
                     if (next_x, next_y) not in open_set:
                         open_set.add((next_x, next_y))
                     blue.goto((next_x, next_y))
                     blue.stamp()
-
         green.goto(a, b)
         green.stamp()
     print("Visited: ", len(solution))
