@@ -427,8 +427,7 @@ def dfs(x, y):
 
 
 def heuristic(x, y):
-    return math.sqrt(abs(x - end_x) * abs(x - end_x) + abs(y - end_y) * abs(y - end_y))
-
+    return math.sqrt((x - end_x) * (x - end_x) + (y - end_y) * (y - end_y))
 
 def aStar(x, y):
     open_set = set()
@@ -443,7 +442,6 @@ def aStar(x, y):
     open_set.add((x, y))
 
     while open_set:
-        # time.sleep(0)
         (a, b) = min(open_set, key=lambda node: f_score[node])
 
         open_set.remove((a, b))
@@ -480,6 +478,52 @@ def aStar(x, y):
     if (end_x, end_y) not in solution:
         unsolvable()
 
+# def aStar(start_x, start_y):
+#     open_set = []
+#     closed_set = set()
+#     came_from = {}
+#
+#     g_score = {(start_x, start_y): 0}
+#     h_score = {(start_x, start_y): heuristic(start_x, start_y)}
+#     f_score = {(start_x, start_y): g_score[(start_x, start_y)] + h_score[(start_x, start_y)]}
+#
+#     heapq.heappush(open_set, (f_score[(start_x, start_y)], (start_x, start_y)))
+#
+#     while open_set:
+#         time.sleep(0)
+#         current_f, (x, y) = heapq.heappop(open_set)
+#
+#         if (x, y) == (end_x, end_y):
+#             break
+#
+#         closed_set.add((x, y))
+#
+#         for (next_x, next_y) in [(x + 24, y), (x - 24, y), (x, y + 24), (x, y - 24)]:
+#             if (next_x, next_y) in closed_set:
+#                 continue
+#
+#             if (next_x, next_y) not in path:
+#                 continue
+#
+#             tentative_g_score = g_score[(x, y)] + 24
+#
+#             if (next_x, next_y) not in [x[1] for x in open_set] or tentative_g_score < g_score.get((next_x, next_y), float('inf')):
+#                 came_from[(next_x, next_y)] = (x, y)
+#                 g_score[(next_x, next_y)] = tentative_g_score
+#                 h_score[(next_x, next_y)] = heuristic(next_x, next_y)
+#                 f_score[(next_x, next_y)] = g_score[(next_x, next_y)] + h_score[(next_x, next_y)]
+#
+#                 heapq.heappush(open_set, (f_score[(next_x, next_y)], (next_x, next_y)))
+#                 solution[(next_x, next_y)] = x,y
+#                 blue.goto(next_x,next_y)
+#                 blue.stamp()
+#
+#         green.goto(x,y)
+#         green.stamp()
+#
+#     print("Visited: ", len(solution))
+#     if (end_x, end_y) not in came_from:
+#         unsolvable()
 
 def back_route(x, y):
     yellow.goto(x, y)
