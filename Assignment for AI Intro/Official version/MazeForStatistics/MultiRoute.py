@@ -26,9 +26,9 @@ def generate_maze(width, height):
 #     mazeStr += ''.join(str(cell) for cell in row)
 #     mazeStr += "\n"
 
-for i in range(5, 6):
+for i in range(0, 1):
     filename = str(i) + ".txt"
-    width, height = 50, 30
+    width, height = 30, 30
     maze = generate_maze(width, height)
     mazeStr = ""
     for row in maze:
