@@ -129,7 +129,7 @@ def setup_maze(grid):
     path_count += 2
     info = (str) (walls_count) + " " + (str) (path_count) + " "
     print("Wall: ", walls_count, " ", "Path: ", path_count)
-    with open("OneRouteStatistic.txt", 'a') as file:
+    with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write(info)
 
 
@@ -183,7 +183,7 @@ def bfs(x, y):
         # green.stamp()
 
     print("Visited: ", len(visited))
-    with open("OneRouteStatistic.txt", 'a') as file:
+    with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write((str)(len(visited)) + " B ")
     if (end_x, end_y) not in visited:
         unsolvable()
@@ -234,14 +234,14 @@ def dfs(x, y):
         # green.goto(x, y)
         # green.stamp()
     print("Visited: ", len(visited))
-    with open("OneRouteStatistic.txt", 'a') as file:
+    with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write((str)(len(visited)) + " D ")
     if (end_x, end_y) not in visited:
         unsolvable()
 
 
 def heuristic(x, y):
-    return math.sqrt((x - end_x) ** 2 + (y - end_y) ** 2)
+    return sqrt(abs(x - end_x) * abs(x - end_x) + abs(y - end_y) * abs(y - end_y))
 
 
 def aStar(x, y):
@@ -289,7 +289,7 @@ def aStar(x, y):
         # green.goto(a, b)
         # green.stamp()
     print("Visited: ", len(solution))
-    with open("OneRouteStatistic.txt", 'a') as file:
+    with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write((str)(len(solution)) + " A ")
     if (end_x, end_y) not in solution:
         unsolvable()
@@ -305,7 +305,7 @@ def back_route(x, y):
         # yellow.stamp()
         x, y = solution[x, y]
     print("Length of solution: " + (str)(len))
-    with open("OneRouteStatistic.txt", 'a') as file:
+    with open("MultiRoutesStatistic.txt", 'a') as file:
         file.write((str)(len) + "\n")
 
 # set up classes
@@ -337,9 +337,9 @@ for i in range(1,101):
             row = line.strip()
             input_grid.append(row)
     setup_maze(input_grid)
-    # bfs(start_x, start_y)
+    bfs(start_x, start_y)
     # dfs(start_x, start_y)
-    aStar(start_x, start_y)
+    # aStar(start_x, start_y)
     back_route(end_x, end_y)
     # wn.clearscreen()
     walls = []
