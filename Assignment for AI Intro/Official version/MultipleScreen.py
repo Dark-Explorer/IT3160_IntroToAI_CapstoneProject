@@ -1,7 +1,6 @@
 import turtle
 import time
 import sys
-import math
 from collections import deque
 import PySimpleGUI as sg
 
@@ -198,18 +197,15 @@ def unsolvable():
             sys.exit()
         window.close()
 
-# Maze by Turtle
-wn = turtle.Screen()
-wn.bgcolor("black")
-wn.title("Maze Solving Program")
-wn.setup(10, 10)
+num = 3
+screen = []
+for i in range(num):
+    wn = turtle.Screen()
+    wn.bgcolor("black")
+    wn.title("Maze Solving Program")
+    wn.setup(10, 10)
+    screen.append(wn)
 
-# Hàm đóng chương trình
-def on_close():
-    sys.exit()
-canvas = turtle.getcanvas()
-root = canvas.winfo_toplevel()
-root.protocol("WM_DELETE_WINDOW", on_close)
 
 class Maze(turtle.Turtle):
     def __init__(self):
@@ -238,7 +234,6 @@ class Blue(turtle.Turtle):
         self.speed(0)
 
 
-# this is the class for the yellow or turtle
 class Red(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -266,7 +261,7 @@ class Black(turtle.Turtle):
         self.speed(0)
 
 
-def update_window_size(grid):
+def update_window_size(grid, sc):
     base_cell_size = 24
     num_rows = len(grid)
     num_cols = len(grid[0])
@@ -274,13 +269,13 @@ def update_window_size(grid):
     window_width = num_cols * base_cell_size
     window_height = num_rows * base_cell_size
 
-    wn.setup(width=window_width + 50, height=window_height + 50)
+    sc.setup(width=window_width + 50, height=window_height + 50)
 
 
-def setup_maze(grid):
+def setup_maze(grid, sc):
     walls_count = 0
     path_count = 0
-    update_window_size(input_grid)
+    update_window_size(input_grid, sc)
     maze_width = len(grid[0]) * 24
     maze_height = len(grid) * 24
 
@@ -327,8 +322,8 @@ def setup_maze(grid):
     #     file.write(info)
 
 
-def end_program(x, y):
-    wn.bye()
+def end_program(x, y, sc):
+    sc.bye()
     sys.exit()
 
 def bfs(x, y):
@@ -435,7 +430,8 @@ def dfs(x, y):
 
 
 def heuristic(x, y):
-    return math.sqrt((x - end_x) * (x - end_x) + (y - end_y) * (y - end_y))
+    return abs(x - end_x) * abs(x - end_x) + abs(y - end_y) * abs(y - end_y)
+
 
 def aStar(x, y):
     open_set = set()
@@ -450,6 +446,7 @@ def aStar(x, y):
     open_set.add((x, y))
 
     while open_set:
+        # time.sleep(0)
         (a, b) = min(open_set, key=lambda node: f_score[node])
 
         open_set.remove((a, b))
@@ -486,52 +483,6 @@ def aStar(x, y):
     if (end_x, end_y) not in solution:
         unsolvable()
 
-# def aStar(start_x, start_y):
-#     open_set = []
-#     closed_set = set()
-#     came_from = {}
-#
-#     g_score = {(start_x, start_y): 0}
-#     h_score = {(start_x, start_y): heuristic(start_x, start_y)}
-#     f_score = {(start_x, start_y): g_score[(start_x, start_y)] + h_score[(start_x, start_y)]}
-#
-#     heapq.heappush(open_set, (f_score[(start_x, start_y)], (start_x, start_y)))
-#
-#     while open_set:
-#         time.sleep(0)
-#         current_f, (x, y) = heapq.heappop(open_set)
-#
-#         if (x, y) == (end_x, end_y):
-#             break
-#
-#         closed_set.add((x, y))
-#
-#         for (next_x, next_y) in [(x + 24, y), (x - 24, y), (x, y + 24), (x, y - 24)]:
-#             if (next_x, next_y) in closed_set:
-#                 continue
-#
-#             if (next_x, next_y) not in path:
-#                 continue
-#
-#             tentative_g_score = g_score[(x, y)] + 24
-#
-#             if (next_x, next_y) not in [x[1] for x in open_set] or tentative_g_score < g_score.get((next_x, next_y), float('inf')):
-#                 came_from[(next_x, next_y)] = (x, y)
-#                 g_score[(next_x, next_y)] = tentative_g_score
-#                 h_score[(next_x, next_y)] = heuristic(next_x, next_y)
-#                 f_score[(next_x, next_y)] = g_score[(next_x, next_y)] + h_score[(next_x, next_y)]
-#
-#                 heapq.heappush(open_set, (f_score[(next_x, next_y)], (next_x, next_y)))
-#                 solution[(next_x, next_y)] = x,y
-#                 blue.goto(next_x,next_y)
-#                 blue.stamp()
-#
-#         green.goto(x,y)
-#         green.stamp()
-#
-#     print("Visited: ", len(solution))
-#     if (end_x, end_y) not in came_from:
-#         unsolvable()
 
 def back_route(x, y):
     yellow.goto(x, y)
@@ -546,25 +497,25 @@ def back_route(x, y):
     # with open("statistic.txt", 'a') as file:
     #     file.write((str)(len) + "\n")
 
-# set up classes
-maze = Maze()
-red = Red()
-blue = Blue()
-green = Green()
-yellow = Yellow()
-black = Black()
-
-# setup lists
-walls = []
-path = []
-visited = set()
-frontier = deque()
-solution = {}
-
 # main program
 method_setup()
-setup_maze(input_grid)
-select_algorithm()
-back_route(end_x, end_y)
-turtle.mainloop()
-turtle.onscreenclick(sys.exit())
+maze = Maze()
+for sc in screen:
+    setup_maze(input_grid, sc)
+    red = Red()
+    blue = Blue()
+    green = Green()
+    yellow = Yellow()
+    black = Black()
+
+    # setup lists
+    walls = []
+    path = []
+    visited = set()
+    frontier = deque()
+    solution = {}
+    select_algorithm()
+    back_route(end_x, end_y)
+    sc.onclick(end_program)
+    turtle.mainloop()
+
